@@ -1,0 +1,19 @@
+# macOS
+.DS_Store
+._*
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Obsidian 工作区缓存（若成员用 Obsidian 打开本仓库时生成）
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache
+.trash/
+
+# 临时与备份文件
+*~
+*.tmp
+*.bak
+*.swp
