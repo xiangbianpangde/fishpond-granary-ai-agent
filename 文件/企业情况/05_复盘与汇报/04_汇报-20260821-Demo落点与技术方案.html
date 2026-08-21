@@ -1,0 +1,1671 @@
+<!DOCTYPE html>
+<!-- Generated shell source for /talk report design system. Run: node build.mjs -->
+<html lang="zh-CN" data-report-design-system="journal">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>智慧鱼塘×智慧粮库 · Demo 落点与技术方案汇报</title>
+<!-- Mermaid is optional, SRI-pinned and loaded after the core document with a timeout. -->
+<meta name="report-mermaid" content="https://cdn.jsdelivr.net/npm/mermaid@11.16.1/dist/mermaid.min.js" data-sri="sha384-aBQXj4hK6Jm05i7aQAsUV3bLdSUrHX1BGYfMB0166TtWt/RRaw+h0Eelme9OCOvy">
+<style>
+:root{
+    /* —— 期刊式学术配色 —— */
+    --bg:#FAFAF7;          --bg-soft:#F4F2EC;
+    --panel:#FFFFFF;       --panel-2:#F8F6F0;
+    --line:#E0DCD0;        --line-soft:#ECEAE2;
+    --txt:#1F1D17;         --txt-dim:#5A5447;
+    --txt-faint:#746D60;   /* AA-safe metadata tone on paper */
+    --brand:#8B3A1F;       /* deep crimson — 期刊重音色 */
+    --brand-2:#A85032;
+    --accent:#2F5061;      /* teal — 学术辅色 */
+    --accent-2:#3F6A82;
+    --gold:#7B5A20;        /* accessible ochre for data emphasis */
+    --good:#3F6B3D;        --warn:#7A5713;  --bad:#9C3A2E;
+    --code-bg:#26241F;     --code-fg:#E8E2D4;
+    --shadow:0 16px 40px -28px rgba(60,40,20,.32);
+    --shadow-strong:0 22px 54px -34px rgba(60,40,20,.46);
+    --radius:14px;         --radius-sm:8px;       --radius-lg:18px;
+    --focus:#2F5061;       --sidebar-w:240px;      --content-max:1180px;
+    --space-1:4px;         --space-2:8px;          --space-3:12px;
+    --space-4:16px;        --space-5:24px;         --space-6:32px;
+    --space-7:40px;        --space-8:56px;
+    --mono:'SFMono-Regular',ui-monospace,'Cascadia Code','Consolas','SF Mono',monospace;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei','Hiragino Sans GB',sans-serif;
+    --serif:'Source Serif Pro','Iowan Old Style','Charter','Noto Serif CJK SC','Songti SC','STSong',serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;font-size:15px;color-scheme:light}
+  body{
+    min-width:320px;font-family:var(--sans);background:
+      radial-gradient(1100px 700px at 86% -6%, #F2E8DC 0%, transparent 55%),
+      radial-gradient(900px 600px at -8% 14%, #EAE2D2 0%, transparent 50%),
+      var(--bg);
+    color:var(--txt);line-height:1.7;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  }
+  img,svg{max-width:100%}
+  button,input,select,textarea{font:inherit}
+  a{color:var(--accent);text-underline-offset:3px}
+  a:hover{color:var(--brand)}
+  :focus-visible{outline:3px solid color-mix(in srgb,var(--focus) 72%,transparent);outline-offset:3px}
+  ::selection{background:var(--brand);color:#fff}
+  .skip-link{position:fixed;left:12px;top:8px;z-index:1000;transform:translateY(-160%);padding:8px 12px;border-radius:6px;background:var(--txt);color:#fff;text-decoration:none;font-size:12px;transition:transform .18s}
+  .skip-link:focus{transform:translateY(0)}
+  .sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+
+  /* —— 整体布局（壳层命名空间，避免与正文 modifier 冲突） —— */
+  .report-shell{display:flex;min-height:100vh}
+  .report-side{
+    position:fixed;inset:0 auto 0 0;width:var(--sidebar-w);
+    background:linear-gradient(180deg,#FAF7F0,#F4F0E5);
+    border-right:1px solid var(--line);
+    padding:22px 14px 28px;overflow-y:auto;z-index:50;
+  }
+  .report-side::-webkit-scrollbar{width:6px}
+  .report-side::-webkit-scrollbar-thumb{background:#DCD6C6;border-radius:8px}
+  .report-brand{display:flex;align-items:center;gap:10px;margin-bottom:6px;padding:0 4px}
+  .report-brand .mark{
+    width:36px;height:36px;border-radius:9px;flex:0 0 auto;
+    background:linear-gradient(135deg,var(--brand),var(--brand-2));
+    display:grid;place-items:center;
+    font-family:var(--serif);font-weight:800;color:#fff;font-size:18px;letter-spacing:-1px;
+    box-shadow:0 10px 24px -10px var(--brand);
+  }
+  .report-brand b{font-family:var(--serif);font-size:15px;letter-spacing:.3px;display:block;line-height:1.2;color:var(--txt)}
+  .report-brand span{font-size:10px;color:var(--txt-dim);letter-spacing:1.5px;font-family:var(--mono);text-transform:uppercase}
+  .report-side .meta{font-size:10px;color:var(--txt-dim);padding:8px 4px 12px;border-top:1px solid var(--line);margin:14px 0 4px;font-family:var(--mono);letter-spacing:.5px}
+  .report-nav a{
+    display:flex;align-items:center;gap:9px;min-height:34px;padding:6px 9px;border-radius:7px;
+    color:var(--txt-dim);text-decoration:none;font-size:12.2px;transition:background .18s,color .18s;margin-bottom:1px;
+  }
+  .report-nav a .n{font-family:var(--mono);font-size:9.5px;color:var(--txt-dim);width:18px;text-align:center;flex:0 0 auto}
+  .report-nav a:hover{background:#EBE5D5;color:var(--txt)}
+  .report-nav a.active{background:linear-gradient(90deg,rgba(47,80,97,.13),transparent);color:#1A1813;box-shadow:inset 2px 0 0 var(--accent)}
+  .report-nav a.active .n{color:var(--accent);font-weight:700}
+  .report-nav .grp{font-size:9px;letter-spacing:2px;color:var(--txt-dim);text-transform:uppercase;margin:14px 0 5px 9px;font-family:var(--mono)}
+
+  .report-main{margin-left:var(--sidebar-w);flex:1;min-width:0;width:min(calc(100vw - var(--sidebar-w)),var(--content-max));padding:30px 44px 80px}
+  #report-content-root{min-width:0}
+
+  /* —— 章节头 —— */
+  .sec-head{margin-bottom:24px}
+  .sec-head .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:2px;color:var(--accent);margin-bottom:4px;font-weight:700}
+  .sec-head h2{font-family:var(--serif);font-size:28px;font-weight:700;letter-spacing:-.5px;margin:4px 0 10px;line-height:1.2}
+  .sec-head p{font-size:13.5px;color:var(--txt-dim);max-width:760px;line-height:1.75}
+
+  h2{font-family:var(--serif);font-size:24px;font-weight:700;margin:38px 0 12px;letter-spacing:-.3px}
+  h3{font-size:16px;font-weight:700;margin:24px 0 10px;display:flex;align-items:center;gap:9px;font-family:var(--sans)}
+  h3 .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex:0 0 auto}
+  h4{font-size:13.5px;font-weight:700;margin:16px 0 7px;color:var(--txt);font-family:var(--sans)}
+  p{font-size:13px;color:var(--txt-dim);margin-bottom:9px;line-height:1.75}
+  .report-main ul,.report-main ol{padding-left:1.25rem;margin:8px 0 12px;color:var(--txt-dim);font-size:13px}
+  .report-main li+li{margin-top:5px}
+  .report-main strong,.report-main b{color:var(--txt)}
+  .report-main pre:not(.code-block){max-width:100%;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}
+  .mono{font-family:var(--mono)}
+  .serif{font-family:var(--serif)}
+
+  /* —— 卡片 —— */
+  .card{display:block;min-width:0;border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:var(--panel);box-shadow:var(--shadow)}
+  .card.hl{border-left:3px solid var(--accent)}
+  .card.brand{border-left:3px solid var(--brand)}
+  .card.gold{border-left:3px solid var(--gold)}
+  .card.good{border-left:3px solid var(--good)}
+  .card.crit{border-left:3px solid var(--bad)}
+  .card h3,.card h4{font:700 13.5px/1.45 var(--sans);margin:0 0 7px;display:block}
+  .card p{font-size:12.4px}
+  .card>:last-child{margin-bottom:0}
+  .grid{display:grid;gap:12px;margin:14px 0}
+  .g2{grid-template-columns:1fr 1fr}
+  .g3{grid-template-columns:1fr 1fr 1fr}
+  .g4{grid-template-columns:1fr 1fr 1fr 1fr}
+  .g5{grid-template-columns:repeat(5,1fr)}
+  .g6{grid-template-columns:repeat(6,1fr)}
+
+  /* —— 数字 KPI —— */
+  .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
+  .kpi{
+    background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:14px 16px;
+    box-shadow:var(--shadow);position:relative;overflow:hidden;
+  }
+  .kpi::after{content:"";position:absolute;top:0;right:0;width:32px;height:32px;background:radial-gradient(circle at top right, rgba(139,58,31,.08), transparent 70%)}
+  .kpi .num{font-family:var(--serif);font-size:32px;font-weight:700;line-height:1;color:var(--brand);letter-spacing:-1px}
+  .kpi .lbl{font-size:11px;color:var(--txt-dim);margin-top:6px;letter-spacing:.3px}
+  .kpi .sub{font-size:10px;color:var(--txt-faint);margin-top:2px;font-family:var(--mono)}
+  .kpi.accent .num{color:var(--accent)}
+  .kpi.gold .num{color:var(--gold)}
+  .kpi.good .num{color:var(--good)}
+
+  /* —— 代码块 —— */
+  .code-block{
+    background:var(--code-bg);color:var(--code-fg);border-radius:11px;padding:16px 18px;
+    font-family:var(--mono);font-size:12px;line-height:1.65;overflow-x:auto;white-space:pre;
+    box-shadow:var(--shadow);margin:12px 0;
+  }
+  .code-block .kw{color:#D4A876}  .code-block .str{color:#9BBF8F}
+  .code-block .cm{color:#807868;font-style:italic}
+  .code-block .ty{color:#87B9D9}  .code-block .fn{color:#E0A887}
+  .code-block .num{color:#C9A87C}
+  .code-block .err{color:#E07A6A;font-weight:700;background:rgba(224,122,106,.15);padding:1px 4px;border-radius:3px}
+
+  /* —— ASCII / diagram —— */
+  .diagram{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px;font-family:var(--mono);font-size:11.5px;line-height:1.55;overflow-x:auto;white-space:pre;box-shadow:var(--shadow);color:var(--txt-dim)}
+  .diagram .hl{color:var(--accent);font-weight:700}
+  .diagram .br{color:var(--brand);font-weight:700}
+  .diagram .gd{color:var(--good);font-weight:700}
+  .diagram .gl{color:var(--gold);font-weight:700}
+  .diagram .cm{color:var(--txt-faint)}
+
+  /* —— 表格 —— */
+  .tbl-wrap{overflow-x:auto;margin:14px 0;border-radius:10px;border:1px solid var(--line);background:var(--panel);box-shadow:var(--shadow);overscroll-behavior-inline:contain}
+  .tbl-wrap:focus-visible{outline-offset:4px}
+  table{width:100%;border-collapse:collapse;font-size:12.4px}
+  caption{padding:10px 12px;text-align:left;font-family:var(--serif);font-size:13px;font-weight:700;color:var(--txt);background:var(--panel)}
+  thead{background:var(--bg-soft)}
+  th{padding:9px 12px;text-align:left;font-weight:700;font-size:11.5px;color:var(--txt-dim);border-bottom:1px solid var(--line);white-space:nowrap;font-family:var(--sans)}
+  td{padding:8px 12px;border-bottom:1px solid var(--line-soft);color:var(--txt-dim);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  td.num{font-family:var(--mono);text-align:right;white-space:nowrap;color:var(--txt)}
+  td.ok{color:var(--good)} td.no{color:var(--bad)} td.warn{color:var(--warn)}
+  td .mono{font-size:11.5px}
+
+  /* —— Pills / chips —— */
+  .b-pill{font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;display:inline-block;font-family:var(--mono);letter-spacing:.3px;white-space:nowrap}
+  .b-pill.ok{background:#DDE9D5;color:var(--good)}
+  .b-pill.mid{background:#F0E2C5;color:var(--warn)}
+  .b-pill.no{background:#EFD5CD;color:var(--bad)}
+  .b-pill.inf{background:rgba(47,80,97,.13);color:var(--accent)}
+  .b-pill.br{background:rgba(139,58,31,.13);color:var(--brand)}
+
+  .chip-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+  .chip{font-size:10.5px;padding:3px 9px;border-radius:5px;background:#EDE8DD;color:var(--txt-dim);font-family:var(--mono);border:1px solid var(--line)}
+  .chip.b{background:rgba(47,80,97,.1);color:var(--accent);border-color:rgba(47,80,97,.2)}
+  .chip.br{background:rgba(139,58,31,.1);color:var(--brand);border-color:rgba(139,58,31,.2)}
+  .chip.gd{background:rgba(63,107,61,.1);color:var(--good);border-color:rgba(63,107,61,.2)}
+  .chip.gl{background:rgba(168,122,46,.1);color:var(--gold);border-color:rgba(168,122,46,.2)}
+
+  /* —— 注解 —— */
+  .note{padding:13px 15px;border-radius:10px;display:flex;gap:10px;align-items:flex-start;font-size:12.6px;margin:14px 0;border:1px solid}
+  .note .ico{font-size:16px;flex:0 0 auto;margin-top:1px;font-family:var(--serif);font-weight:700}
+  .note.info{border-color:rgba(47,80,97,.3);background:rgba(47,80,97,.06)}
+  .note.warn{border-color:rgba(176,127,34,.3);background:rgba(176,127,34,.07)}
+  .note.crit{border-color:rgba(156,58,46,.35);background:rgba(156,58,46,.07)}
+  .note.good{border-color:rgba(63,107,61,.3);background:rgba(63,107,61,.07)}
+
+  /* —— 流程图 —— */
+  .flow-row{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;align-items:center}
+  .flow-step{font-size:11px;padding:6px 11px;border-radius:6px;background:var(--panel);border:1px solid var(--line);color:var(--txt-dim);display:flex;align-items:center;gap:6px;font-family:var(--sans)}
+  .flow-step .dot{width:6px;height:6px;border-radius:50%;flex:0 0 auto}
+  .flow-arrow{color:var(--txt-faint);font-size:14px;font-family:var(--mono)}
+  .flow-step.brand{background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff;border-color:var(--brand);font-weight:600}
+  .flow-step.gate{background:#F0E2C5;border-color:#C9A66A;color:var(--warn);font-weight:700}
+
+  /* —— Verdict 框 —— */
+  .verdict{margin:18px 0;border:2px solid var(--brand);border-radius:13px;padding:18px 22px;background:linear-gradient(135deg,#FCF6EE,#F8F0E0);box-shadow:var(--shadow-strong)}
+  .verdict .lbl{font-family:var(--mono);font-size:9.5px;letter-spacing:2px;color:var(--brand);font-weight:700;margin-bottom:6px}
+  .verdict h3,.verdict h4{font:700 16px/1.4 var(--serif);display:block;margin:0 0 9px}
+
+  /* —— 进度条 / 仪表 —— */
+  .bar-row{display:flex;align-items:center;gap:10px;margin:7px 0;font-size:12px}
+  .bar-row .lbl{width:160px;color:var(--txt-dim);font-size:11.5px;flex:0 0 auto}
+  .bar-row .bar{flex:1;height:9px;background:var(--bg-soft);border-radius:5px;overflow:hidden;position:relative;border:1px solid var(--line-soft)}
+  .bar-row .fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:5px;transition:width .6s}
+  .bar-row .fill.brand{background:linear-gradient(90deg,var(--brand),var(--brand-2))}
+  .bar-row .fill.gold{background:linear-gradient(90deg,var(--gold),#C9973A)}
+  .bar-row .fill.good{background:linear-gradient(90deg,var(--good),#558A52)}
+  .bar-row .val{font-family:var(--mono);font-size:11px;color:var(--txt);width:48px;text-align:right;flex:0 0 auto}
+
+  /* —— 对比卡 —— */
+  .vs{display:grid;grid-template-columns:1fr 56px 1fr;gap:14px;align-items:stretch;margin:14px 0}
+  .vs-col{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow)}
+  .vs-col.old{border-top:3px solid var(--bad);background:linear-gradient(180deg,#FBEEEA,#FFF)}
+  .vs-col.new{border-top:3px solid var(--good);background:linear-gradient(180deg,#EFF3EA,#FFF)}
+  .vs-col h3,.vs-col h4{display:block;margin:0 0 8px;font:700 14.5px/1.45 var(--serif)}
+  .vs-col.old h3,.vs-col.old h4{color:var(--bad)}
+  .vs-col.new h3,.vs-col.new h4{color:var(--good)}
+  .vs-mid{display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:24px;color:var(--txt-faint);font-weight:700}
+
+  /* —— 标签云 —— */
+  .tag-cloud{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+  .tag-item{font-size:11px;padding:4px 12px;border-radius:20px;background:white;border:1px solid var(--line);color:var(--txt-dim);cursor:default;transition:.18s}
+  .tag-item:hover{border-color:var(--brand);color:var(--brand)}
+
+  /* —— TOC / 索引 —— */
+  .toc{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+  .toc a{
+    display:flex;gap:10px;align-items:center;padding:10px 13px;border:1px solid var(--line);
+    border-radius:10px;background:var(--panel);text-decoration:none;color:var(--txt-dim);
+    transition:.18s;font-size:12.5px;
+  }
+  .toc a:hover{border-color:var(--accent);color:var(--accent);box-shadow:var(--shadow)}
+  .toc a .ix{font-family:var(--mono);font-size:11px;color:var(--brand);width:22px;height:22px;display:grid;place-items:center;border-radius:5px;background:rgba(139,58,31,.1);flex:0 0 auto;font-weight:700}
+  .toc a b{font-weight:600;color:var(--txt);font-size:13px;display:block;margin-bottom:1px}
+
+  /* —— Timeline —— */
+  .tl{position:relative;padding:8px 0 8px 24px;margin:10px 0 14px}
+  .tl::before{content:"";position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:linear-gradient(180deg,var(--brand),var(--accent))}
+  .tl-item{position:relative;margin:9px 0;padding:8px 0 0 14px}
+  .tl-item::before{content:"";position:absolute;left:-19px;top:14px;width:8px;height:8px;border-radius:50%;background:#fff;border:2px solid var(--brand)}
+  .tl-item h4,.tl-item h5{font:700 13px/1.45 var(--sans);color:var(--txt);margin:0 0 3px}
+  .tl-item p{font-size:11.8px;color:var(--txt-dim);margin:0 0 2px}
+  .tl-item .ver{font-family:var(--mono);font-size:10px;color:var(--brand);font-weight:600;margin-left:6px}
+
+  /* —— 标签 tab —— */
+  .tabbar{display:flex;gap:2px;margin:14px 0 0;border-bottom:1px solid var(--line)}
+  .tab{padding:7px 14px;font-size:12px;color:var(--txt-dim);cursor:pointer;border:1px solid transparent;border-bottom:none;border-radius:6px 6px 0 0;background:transparent;transition:.18s;font-family:var(--sans)}
+  .tab:hover{background:var(--bg-soft)}
+  .tab.active{background:var(--panel);border-color:var(--line);color:var(--brand);font-weight:700;margin-bottom:-1px}
+  .tab-panel{display:none;padding:14px 0}
+  .tab-panel.active{display:block}
+
+  /* —— 可点击钩子详情 —— */
+  details.hook{margin:6px 0;padding:9px 12px;background:var(--panel);border:1px solid var(--line);border-radius:8px;cursor:pointer;transition:.18s}
+  details.hook:hover{border-color:var(--accent)}
+  details.hook[open]{background:var(--panel-2);border-color:var(--accent)}
+  details.hook summary{font-size:12.5px;color:var(--txt);font-weight:600;list-style:none;display:flex;align-items:center;gap:8px}
+  details.hook summary::before{content:"▸";font-size:10px;color:var(--accent);transition:transform .2s;display:inline-block;width:12px}
+  details.hook[open] summary::before{transform:rotate(90deg)}
+  details.hook .body{margin-top:8px;padding:8px 0 0;border-top:1px solid var(--line-soft);font-size:12px;color:var(--txt-dim)}
+
+  /* —— 矩阵样式 —— */
+  .matrix{width:100%;border-collapse:collapse;font-size:11.5px;font-family:var(--mono)}
+  .matrix th{background:var(--bg-soft);padding:6px 8px;font-weight:700;font-size:10.5px;text-align:center;color:var(--txt-dim);border:1px solid var(--line);font-family:var(--mono)}
+  .matrix td{padding:5px 7px;text-align:center;border:1px solid var(--line-soft);color:var(--txt-dim);background:#FFF}
+  .matrix td.lbl{text-align:left;background:var(--panel-2);color:var(--txt);font-family:var(--sans);font-weight:600}
+  .matrix td.yes{background:rgba(63,107,61,.18);color:var(--good);font-weight:700}
+  .matrix td.partial{background:rgba(176,127,34,.18);color:var(--warn);font-weight:700}
+  .matrix td.no{background:rgba(156,58,46,.13);color:var(--bad);font-weight:700}
+  .matrix td.ours{background:rgba(47,80,97,.12);color:var(--accent);font-weight:700}
+  .matrix td.ours-yes{background:rgba(63,107,61,.25);color:var(--good);font-weight:700;box-shadow:inset 0 0 0 1.5px var(--accent)}
+
+  /* —— 分割线 —— */
+  hr.div{height:1px;background:var(--line);margin:30px 0;border:none}
+
+  /* —— 引用块 —— */
+  blockquote{
+    border-left:3px solid var(--brand);background:var(--panel-2);padding:11px 16px;
+    margin:12px 0;border-radius:0 9px 9px 0;font-family:var(--serif);font-size:13.5px;color:var(--txt);
+    font-style:italic;
+  }
+  blockquote cite{display:block;font-style:normal;font-family:var(--mono);font-size:10.5px;color:var(--txt-faint);margin-top:6px;letter-spacing:.5px}
+
+  /* —— 圆形进度 / 仪表盘 —— */
+  .gauge{display:flex;align-items:center;gap:14px;padding:12px 14px;background:var(--panel);border:1px solid var(--line);border-radius:11px;box-shadow:var(--shadow)}
+  .gauge svg{flex:0 0 auto}
+  .gauge .text b{font-family:var(--serif);font-size:18px;color:var(--txt);display:block}
+  .gauge .text span{font-size:11px;color:var(--txt-dim)}
+
+  /* —— 钩子时间线（窄） —— */
+  .h-tl{display:flex;align-items:center;gap:0;margin:14px 0;font-family:var(--mono);font-size:10.5px;flex-wrap:wrap}
+  .h-tl .ev{padding:5px 9px;background:var(--panel);border:1px solid var(--line);position:relative}
+  .h-tl .ev.brand{background:var(--brand);color:#fff;border-color:var(--brand);font-weight:700}
+  .h-tl .ev.gate{background:#F0E2C5;border-color:#C9A66A;color:var(--warn);font-weight:700}
+  .h-tl .ev.ok{background:#DDE9D5;border-color:#9AB58D;color:var(--good);font-weight:700}
+  .h-tl .arrow{padding:0 3px;color:var(--txt-faint);font-size:13px}
+
+  /* —— 折叠面板 —— */
+  details.conv{margin:6px 0;padding:10px 12px;background:var(--panel);border:1px solid var(--line);border-radius:9px}
+  details.conv summary{font-size:12.8px;font-weight:600;cursor:pointer;list-style:none;display:flex;align-items:center;gap:9px}
+  details.conv summary::before{content:"▸";color:var(--accent);font-size:10px;transition:transform .2s;width:12px;display:inline-block}
+  details.conv[open] summary::before{transform:rotate(90deg)}
+  details.conv .body{margin-top:8px;padding-top:8px;border-top:1px solid var(--line-soft);font-size:12px;color:var(--txt-dim);line-height:1.7}
+
+  /* —— 标签 tag —— */
+  .lbl-tag{font-family:var(--mono);font-size:9.5px;letter-spacing:1.5px;color:var(--accent);text-transform:uppercase;font-weight:700}
+
+  /* —— 顶部 hero —— */
+  .hero{
+    background:linear-gradient(135deg,#FAF6EC 0%, #F2E8D8 50%, #EAD9C0 100%);
+    border:1px solid var(--line);border-radius:18px;padding:30px 36px;margin-bottom:28px;
+    box-shadow:var(--shadow);position:relative;overflow:hidden;
+  }
+  .hero::before{content:"";position:absolute;right:-40px;top:-40px;width:280px;height:280px;background:radial-gradient(circle, rgba(139,58,31,.10), transparent 70%);pointer-events:none}
+  .hero::after{content:"";position:absolute;left:-60px;bottom:-60px;width:240px;height:240px;background:radial-gradient(circle, rgba(47,80,97,.08), transparent 70%);pointer-events:none}
+  .hero .tag-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+  .hero h1{font-family:var(--serif);font-size:38px;font-weight:700;letter-spacing:-1.2px;line-height:1.15;margin:6px 0 10px;color:var(--txt)}
+  .hero .sub{font-family:var(--serif);font-size:16px;color:var(--txt-dim);max-width:740px;line-height:1.5;margin-bottom:18px}
+  .hero .meta-row{display:flex;gap:18px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;color:var(--txt-faint);letter-spacing:.5px}
+
+  /* —— anchor 偏移修正 —— */
+  [id]{scroll-margin-top:24px}
+
+  /* —— 段落首字下沉 —— */
+  .lead::first-letter{font-family:var(--serif);font-size:48px;float:left;line-height:0.95;padding:4px 8px 0 0;color:var(--brand);font-weight:700}
+
+  @media (max-width:1080px){
+    .g4{grid-template-columns:1fr 1fr}
+    .g5{grid-template-columns:1fr 1fr 1fr}
+    .g6{grid-template-columns:1fr 1fr 1fr}
+    .kpi-row{grid-template-columns:1fr 1fr}
+    .vs{grid-template-columns:1fr}
+    .vs-mid{padding:8px 0}
+    .toc{grid-template-columns:1fr 1fr}
+  }
+
+  /* —— Mermaid 容器 —— */
+  .mermaid-wrap{
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:18px 20px;margin:14px 0;box-shadow:var(--shadow);
+    overflow-x:auto;
+  }
+  .mermaid-wrap .cap{
+    font-family:var(--mono);font-size:10.5px;letter-spacing:1.5px;
+    color:var(--accent);font-weight:700;margin-bottom:8px;text-transform:uppercase;
+    display:flex;align-items:center;gap:8px;
+  }
+  .mermaid-wrap .cap::before{
+    content:"";width:18px;height:1.5px;background:var(--accent);
+  }
+  .mermaid{display:flex;justify-content:center}
+  .mermaid svg{max-width:100%;height:auto;font-family:var(--sans)!important}
+
+  /* —— Tab 切换 —— */
+  .tabs{display:flex;gap:3px;margin:14px 0 0;border-bottom:1px solid var(--line)}
+  .tabs .tb{
+    min-height:38px;padding:8px 16px;font-size:12.5px;color:var(--txt-dim);cursor:pointer;
+    border:1px solid transparent;border-bottom:none;border-radius:6px 6px 0 0;
+    background:transparent;transition:background .18s,color .18s;font-family:var(--sans);
+    display:flex;align-items:center;gap:6px;
+  }
+  .tabs .tb:hover{background:var(--bg-soft);color:var(--txt)}
+  .tabs .tb.active{
+    background:var(--panel);border-color:var(--line);color:var(--brand);
+    font-weight:700;margin-bottom:-1px;
+  }
+  .tabs .tb .badge{
+    font-family:var(--mono);font-size:9.5px;padding:1px 6px;border-radius:3px;
+    background:rgba(139,58,31,.12);color:var(--brand);
+  }
+  .tab-pane{display:none;padding:14px 0;animation:fadeIn .3s}
+  .tab-pane.active{display:block}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+  /* —— 进度条动画 —— */
+  .anim-bar{position:relative;height:9px;background:var(--bg-soft);border-radius:5px;overflow:hidden;border:1px solid var(--line-soft)}
+  .anim-bar .fill{
+    height:100%;border-radius:5px;
+    background:linear-gradient(90deg,var(--accent),var(--accent-2));
+    width:0;transition:width 1.4s cubic-bezier(.4,0,.2,1);
+  }
+  .anim-bar .fill::after{
+    content:"";position:absolute;top:0;left:0;right:0;bottom:0;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);
+    animation:shimmer 2.4s linear infinite;
+  }
+  @keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+  .anim-bar.armed .fill{width:var(--w)}
+
+  /* —— 浮窗提示 —— */
+  .tip{position:relative;display:inline-block}
+  .tip .tipbox{
+    position:absolute;bottom:130%;left:50%;transform:translateX(-50%) scale(.95);
+    background:#1F1D17;color:#FAF6EC;padding:8px 12px;border-radius:7px;
+    font-size:11.5px;white-space:nowrap;opacity:0;pointer-events:none;
+    transition:.2s;font-family:var(--sans);box-shadow:0 8px 20px -8px rgba(0,0,0,.4);
+    z-index:100;
+  }
+  .tip .tipbox::after{
+    content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);
+    border:5px solid transparent;border-top-color:#1F1D17;
+  }
+  .tip:hover .tipbox,.tip:focus-within .tipbox{opacity:1;transform:translateX(-50%) scale(1)}
+
+  /* —— 步骤模拟器 —— */
+  .sim{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);margin:14px 0}
+  .sim h4{margin:0 0 8px;font-family:var(--serif);font-size:14.5px;display:flex;align-items:center;gap:8px}
+  .sim h4 .ind{width:8px;height:8px;border-radius:50%;background:var(--good);box-shadow:0 0 0 3px rgba(63,107,61,.2);animation:pulse 1.6s ease-in-out infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(63,107,61,.2)}50%{box-shadow:0 0 0 6px rgba(63,107,61,.05)}}
+  .sim .sim-step{
+    padding:7px 11px;background:var(--bg-soft);border:1px solid var(--line-soft);
+    border-radius:7px;margin:5px 0;font-family:var(--mono);font-size:11.5px;
+    color:var(--txt-dim);display:flex;align-items:center;gap:8px;transition:.3s;
+  }
+  .sim .sim-step.run{background:#DDE9D5;border-color:#9AB58D;color:var(--good);font-weight:600}
+  .sim .sim-step.fail{background:#EFD5CD;border-color:#C89589;color:var(--bad);font-weight:600}
+  .sim .sim-step .glyph{width:16px;text-align:center;flex:0 0 auto;font-weight:700}
+  .sim .btn-row{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
+  button,.btn{
+    appearance:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:38px;
+    padding:7px 13px;font-size:11.8px;background:var(--panel);border:1px solid var(--line);
+    border-radius:6px;cursor:pointer;font-family:var(--mono);transition:background .18s,color .18s,border-color .18s;color:var(--txt-dim);text-decoration:none;
+  }
+  button:hover,.btn:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
+  button.primary,.btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+  button.primary:hover,.btn.primary:hover{background:var(--brand-2)}
+  button.danger:hover,.btn.danger:hover{background:var(--bad);border-color:var(--bad)}
+  button.good:hover,.btn.good:hover{background:var(--good);border-color:var(--good)}
+  button:disabled,.btn[aria-disabled="true"]{opacity:.5;cursor:not-allowed}
+  .btn-row,.actions{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
+
+  /* —— 数字滚动 —— */
+  .counter{font-family:var(--serif);font-size:32px;font-weight:700;line-height:1;color:var(--brand);letter-spacing:-1px}
+  .counter.gold{color:var(--gold)}
+  .counter.accent{color:var(--accent)}
+  .counter.good{color:var(--good)}
+
+  /* —— 设计系统实用类 / 汇报壳增强 —— */
+  .report-side .talk-badge{
+    margin-top:10px;padding:6px 8px;border-radius:7px;font-family:var(--mono);
+    font-size:10px;color:var(--txt-dim);border:1px dashed var(--line);letter-spacing:.4px;
+  }
+  .report-footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--line);font-family:var(--mono);font-size:10px;color:var(--txt-dim)}
+  .report-footer:empty{display:none}
+  .report-empty{padding:40px 20px;color:var(--txt-dim);text-align:center;font-family:var(--serif);font-size:18px}
+  .section-gap{margin-top:40px}
+  .mt-0{margin-top:0!important}.mt-1{margin-top:8px!important}.mt-2{margin-top:14px!important}.mt-3{margin-top:24px!important}.mt-4{margin-top:40px!important}
+  .mb-0{margin-bottom:0!important}.mb-1{margin-bottom:8px!important}.mb-2{margin-bottom:14px!important}.mb-3{margin-bottom:24px!important}
+  .text-small{font-size:11px!important}.text-faint{color:var(--txt-dim)!important}.text-brand{color:var(--brand)!important}.text-accent{color:var(--accent)!important}
+  .text-right{text-align:right!important}.nowrap{white-space:nowrap}.full-span{grid-column:1/-1}
+  .col-id{width:44px}.col-sm{width:120px}.col-md{width:190px}.col-lg{width:280px}
+  .mermaid-status{margin-bottom:8px;padding:6px 8px;border:1px dashed var(--line);border-radius:6px;color:var(--txt-dim);font:10.5px var(--mono)}
+  .mermaid[data-report-state="source"]{display:block;white-space:pre-wrap;min-width:520px;padding:10px;color:var(--txt-dim);font:11px/1.65 var(--mono)}
+
+  @media (max-width:960px){
+    .report-shell{flex-direction:column}
+    .report-side{position:sticky;inset:0 0 auto;width:100%;height:auto;padding:10px 14px;border-right:none;border-bottom:1px solid var(--line);overflow:hidden;box-shadow:0 8px 24px -24px rgba(60,40,20,.55)}
+    .report-side::after{content:"";position:absolute;right:0;bottom:0;width:28px;height:42px;background:linear-gradient(90deg,transparent,#F4F0E5 82%);pointer-events:none}
+    .report-brand{margin:0 0 7px}.report-brand .mark{width:30px;height:30px;font-size:15px}.report-brand span{display:none}
+    .report-side .meta,.report-side .talk-badge{display:none}
+    .report-nav{display:flex;gap:4px;overflow-x:auto;padding:0 18px 3px 0;scrollbar-width:thin}
+    .report-nav a{flex:0 0 auto;min-height:34px;white-space:nowrap;margin:0;background:rgba(255,255,255,.45);border:1px solid transparent}
+    .report-nav a.active{border-color:rgba(47,80,97,.25);box-shadow:inset 0 -2px 0 var(--accent)}
+    .report-nav .grp{display:none}
+    .report-main{width:100%;max-width:none;margin-left:0;padding:22px 18px 60px}
+    [id]{scroll-margin-top:96px}
+    .kpi-row{grid-template-columns:1fr 1fr}
+    .g2,.g3,.g4,.g5,.g6{grid-template-columns:1fr}
+    .toc{grid-template-columns:repeat(3,1fr)}
+    .tbl-wrap table{min-width:640px}
+  }
+  @media (max-width:560px){
+    html{font-size:14px}
+    .report-main{padding:16px 14px 48px}
+    .hero{padding:23px 20px;border-radius:14px}.hero h1{font-size:29px;letter-spacing:-.7px}.hero .sub{font-size:14px}
+    .sec-head h2{font-size:24px}.kpi-row,.toc{grid-template-columns:1fr}
+    .kpi .num,.counter{font-size:29px}
+    .bar-row{align-items:flex-start;flex-wrap:wrap}.bar-row .lbl{width:100%}.bar-row .val{margin-left:auto}
+    .tabs{overflow-x:auto}.tabs .tb{flex:0 0 auto}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+  }
+  @media print{
+    @page{size:A4;margin:14mm}
+    body{background:#fff!important;color:#111;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .report-side,.skip-link,.btn-row,.actions,.tabs,.tabbar{display:none!important}
+    .report-main{width:100%;max-width:none;margin:0;padding:0}
+    .hero,.card,.kpi,.tbl-wrap,.verdict,.note,.mermaid-wrap{box-shadow:none;break-inside:avoid}
+    .sec-head{break-after:avoid}.tbl-wrap{overflow:visible}.tbl-wrap table{min-width:0}
+    .tab-pane,.tab-panel,.tab-pane[hidden],.tab-panel[hidden]{display:block!important;animation:none!important;padding:8px 0 12px}
+    .tab-pane::before,.tab-panel::before{content:attr(data-print-title);display:block;margin:6px 0 4px;font:700 11px var(--mono);letter-spacing:.6px;color:var(--brand)}
+    details>*,details:not([open])>*{display:block!important}
+    a{color:inherit;text-decoration:none}
+  }
+
+
+/* —— trace 轨迹组件（talk/report 集成） —— */
+#report-trace-root{display:none}
+#report-trace-root.trace-on{display:block;margin:0 0 18px}
+.trace-panel{border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);box-shadow:var(--shadow);overflow:hidden}
+.trace-head{display:flex;align-items:baseline;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line-soft);font-size:13px;font-weight:700;color:var(--txt)}
+.trace-head .hint{font-weight:400;font-size:11px;color:var(--txt-faint);margin-left:auto}
+.trace-stats{display:flex;gap:18px;flex-wrap:wrap;padding:10px 16px;border-bottom:1px solid var(--line-soft);font-size:12px;color:var(--txt-dim)}
+.trace-stats b{color:var(--txt);font-family:ui-monospace,Menlo,monospace;font-weight:600}
+.trace-water{padding:10px 16px;display:flex;flex-direction:column;gap:5px}
+.trow{display:flex;align-items:center;gap:10px;padding:5px 8px;border-radius:8px;cursor:pointer;border:1px solid transparent;font-size:12.5px}
+.trow:hover{background:var(--panel-2)}
+.trow .no{font:10.5px ui-monospace,Menlo,monospace;color:var(--txt-faint);width:24px;flex:none}
+.trow .t{width:34px;flex:none;text-align:center;font-size:10px;font-weight:700;color:#fff;border-radius:5px;padding:1px 0}
+.trow .lbl{flex:none;max-width:230px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.trow .track{flex:1;position:relative;height:14px}
+.trow .bar{position:absolute;left:0;top:3px;height:8px;border-radius:4px;opacity:.8}
+.trow .ms{font:10.5px ui-monospace,Menlo,monospace;color:var(--txt-faint);width:46px;text-align:right}
+.trow .flag{appearance:none;border:1px solid var(--line);background:var(--panel);border-radius:6px;font-size:10px;cursor:pointer;padding:1px 6px;color:var(--txt-faint)}
+.trow .flag.on{color:var(--bad);border-color:var(--bad)}
+.trow.cur{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,transparent)}
+.trace-review{padding:4px 16px 14px;display:flex;flex-direction:column;gap:6px}
+.trace-review .item{display:flex;gap:8px;align-items:center;border:1px solid color-mix(in srgb,var(--bad) 30%,var(--line));background:color-mix(in srgb,var(--bad) 6%,var(--panel));border-radius:9px;padding:6px 10px;font-size:12px}
+.trace-review .item b{font-weight:600;color:var(--txt)}
+.trace-empty{color:var(--txt-faint);font-size:11.5px;padding:4px 0}
+.trace-detail{font:11.5px/1.6 ui-monospace,Menlo,monospace;background:var(--code-bg);color:var(--code-fg);border-radius:8px;padding:10px 12px;margin:6px 0 0;white-space:pre-wrap;word-break:break-word}
+.trace-modal{position:fixed;inset:0;background:rgba(30,26,20,.5);display:flex;align-items:center;justify-content:center;z-index:60}
+.trace-modal .box{background:var(--panel);border-radius:var(--radius);box-shadow:var(--shadow-strong);width:min(620px,92vw);max-height:84vh;overflow:auto;padding:18px 20px;position:relative}
+.trace-modal h4{margin:0 0 10px;font-size:14px}
+.trace-modal .x{position:absolute;top:10px;right:12px;border:0;background:none;font-size:15px;cursor:pointer;color:var(--txt-faint)}
+</style>
+<meta http-equiv="Content-Security-Policy" content="default-src &#39;none&#39;; script-src &#39;sha256-29Ff9iqRqUNIKmB6vNR1+TR2zScPpxwDwsT/ruzEv7M=&#39; &#39;sha384-aBQXj4hK6Jm05i7aQAsUV3bLdSUrHX1BGYfMB0166TtWt/RRaw+h0Eelme9OCOvy&#39; &#39;sha256-P7ENwyVTGqyGFxscvVZ5aDYLHcL2xnGVfFOoFOg52Fs=&#39;; script-src-attr &#39;none&#39;; style-src &#39;none&#39;; style-src-elem &#39;sha256-XKbg6W8AbKXnuue6cH80S336MUdtpOB/HgNMINi5POg=&#39; &#39;nonce-IVXen1IPXTW2VtqSIqBLx1BM&#39;; style-src-attr &#39;unsafe-inline&#39;; img-src &#39;self&#39; data: https:; font-src &#39;self&#39; data: https:; connect-src &#39;self&#39;; object-src &#39;none&#39;; base-uri &#39;none&#39;; form-action &#39;none&#39;; frame-src &#39;none&#39;; worker-src &#39;none&#39;">
+<meta name="report-style-nonce" content="IVXen1IPXTW2VtqSIqBLx1BM">
+</head>
+<body>
+<a class="skip-link" href="#report-main">跳至正文</a>
+<div class="report-shell">
+  <aside class="report-side" aria-label="报告信息与目录">
+    <div class="report-brand">
+      <div class="mark" aria-hidden="true">汇</div>
+      <div>
+        <b>智慧鱼塘×智慧粮库 AI 智能体</b>
+        <span>Demo 落点与技术方案汇报</span>
+      </div>
+    </div>
+    <div class="meta">七阶段工作版就绪 · 落点 A主+B并行<br>更新 2026-08-21</div>
+    <nav id="report-nav" class="report-nav" aria-label="报告目录"></nav>
+    <div class="talk-badge">pi /talk · report ds v3</div>
+  </aside>
+  <main class="report-main" id="report-main" tabindex="-1">
+    <div id="report-content-root">
+<section id="hero" class="hero" data-nav-title="摘要">
+  <div class="tag-row">
+    <span class="b-pill ok">七阶段工作版全部就绪</span>
+    <span class="b-pill inf">Stage 8 · 开发准备</span>
+    <span class="b-pill br">不等现场条件即可开工</span>
+  </div>
+  <h1>智慧鱼塘 × 智慧粮库 AI 智能体 · Demo 落点与技术方案汇报</h1>
+  <p class="sub">先盘清家底：文件全景 → 企业现状画像 → 需求清单（57 条逐项列出）→ 可执行 Demo 清单（6 个候选逐一评估）→ 推荐落点与理由 → 技术方案 → 交接清单。结论：主推「渔场夜间缺氧预警」，并行「粮库熏蒸区防误入」；先用模拟数据把全流程跑通，拿到现场证据再逐项换成真数据。</p>
+  <div class="meta-row"><span>2026-08-21</span><span>•</span><span>工作区：文件/demo 及全项目目录</span><span>•</span><span>内部汇报</span></div>
+</section>
+
+<section id="files" class="sec-head section-gap" data-nav-title="文件地图">
+  <div class="tag">01 · FILE MAP</div>
+  <h2>文件大致介绍与重点文件</h2>
+  <p>项目按「冻结基线 + 工作区」组织：demo 编号文件是阶段主线，企业情况与资料库是证据底座。</p>
+</section>
+
+<div class="tbl-wrap">
+  <table>
+    <caption>目录结构与职责</caption>
+    <thead><tr><th scope="col">目录</th><th scope="col">内容</th><th scope="col">状态</th></tr></thead>
+    <tbody>
+      <tr><td class="col-md">文件/demo/</td><td>阶段主线 01–12 号文件（PRD→图表→对比→需求池→调研框架→规划→案例对照→双轨→二轮方案→落点→交接）＋ 子目录 Demo开发准备/（本轮新增）、交接文件/、需求分类/</td><td class="ok"><span class="b-pill ok">主线完整</span></td></tr>
+      <tr><td class="col-md">文件/企业情况/</td><td>企业画像 16 篇（身份、业务资产、组织决策、技术系统、数据资产、AI 机会、风险登记等）、知识图谱（33 个节点、25 个待核验事实）、调研记录、复盘与汇报</td><td class="ok"><span class="b-pill ok">已建齐</span></td></tr>
+      <tr><td class="col-md">文件/资料库/</td><td>行业案例 25 个（渔业 11 个、粮库 14 个）、深度调研第一轮三件套、系统图表 8 张</td><td class="ok"><span class="b-pill ok">行业对照层</span></td></tr>
+      <tr><td class="col-md">文件/阶段复盘/</td><td>0820 已知信息整理、0820 深度调研第一轮两份复盘</td><td class="mid"><span class="b-pill mid">进行中</span></td></tr>
+      <tr><td class="col-md">提示词/</td><td>第一轮情况梳理原始提示词（7 阶段任务源头）</td><td class="mid"><span class="b-pill mid">存档</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="tbl-wrap mt-2">
+  <table>
+    <caption>★ 重点阅读清单（按阅读顺序）</caption>
+    <thead><tr><th scope="col">文件</th><th scope="col">所属阶段</th><th scope="col">为什么重点看</th></tr></thead>
+    <tbody>
+      <tr><td>01_Demo_PRD.md（v0.3.4）</td><td>阶段一 · 冻结基线</td><td>目标与边界、「AI 参谋不夺权」的三层安全架构、两个入选场景的现成验收标准——所有验收口径的源头</td></tr>
+      <tr><td>04_Demo需求池.md（v0.3.3）</td><td>阶段一 · 冻结基线</td><td>57 条需求的唯一台账，每条都有编号、名称、优先级和当前状态</td></tr>
+      <tr><td>11_Demo方向确定与落点选择.md</td><td>阶段六 · 工作版</td><td>6 个候选怎么打分、为什么选 A 和 B、什么条件下切换方案（决策树）</td></tr>
+      <tr><td>12_数据交接清单.md</td><td>阶段七 · 工作版</td><td>请甲方提供的 10 样东西：每样写清谁提供、什么格式、什么时候给、给不了怎么办</td></tr>
+      <tr><td>Demo开发准备/00_任务编排-Demo开发准备.md</td><td>阶段八 · 本轮新增</td><td>接下来干什么：四条工作线、五个里程碑、三个决策时间点</td></tr>
+      <tr><td>Demo开发准备/01_技术方案-A夜间低氧与B熏蒸误入.md</td><td>阶段八 · 本轮新增</td><td>入选场景怎么做：底座设计、两条链路、15 个安全测试用例、降级预案</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<section id="enterprise" class="sec-head section-gap" data-nav-title="企业画像">
+  <div class="tag">02 · ENTERPRISE</div>
+  <h2>当前企业现状画像</h2>
+  <p>一句话：一家同时经营「连片蟹塘」和「县级储备粮库」的项目方，设备和软件铺了一批，但还处在<strong>「机器采数、人来决策」</strong>的阶段——没有会综合判断的 AI 中枢，数据躺着睡觉，老师傅经验离不开人。以下内容除特别标注外，均来自项目方自己的材料陈述，<strong>还没有一份现场实测记录或书面证明</strong>。</p>
+</section>
+
+<div class="tbl-wrap">
+  <table>
+    <caption>企业身份（全部待书面确认）</caption>
+    <thead><tr><th scope="col">项目</th><th scope="col">目前了解</th><th scope="col">确认方式</th></tr></thead>
+    <tbody>
+      <tr><td>企业名称与性质</td><td>跨农业＋储备粮的合作主体（民企或地方平台），正式名称待提供</td><td>营业执照副本</td></tr>
+      <tr><td>主营业务</td><td>智慧渔业养殖 ＋ 县级储备粮保管</td><td>业务范围文件</td></tr>
+      <tr><td>粮库经营权</td><td>承担县级储备粮保管责任</td><td>承储协议或上级文件</td></tr>
+      <tr><td>业务区域</td><td>某个县级行政区（具体县市待提供）</td><td>访谈确认</td></tr>
+      <tr><td>服务对象</td><td>政府监管部门 ＋ 养殖企业/合作社 ＋ 内部管理</td><td>对象名单</td></tr>
+      <tr><td>关键责任人</td><td>业务、系统、安全、授权、验收五类角色的名单尚未书面提供</td><td>甲方书面名单</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="grid g2 mt-2">
+  <article class="card hl">
+    <h3>业务一 · 智慧渔业（赚钱的业务）</h3>
+    <p><strong>怎么经营</strong>：连片规模化蟹塘，用跨塘架空索道挂着移动料仓定点抛洒投喂，替代人工划船。<br><strong>日常流程</strong>：投喂 → 水质调控 → 病害防控 → 台账归集。<br><strong>现在怎么做</strong>：老师傅看经验判断，系统只会「超过阈值响警报」，夜里全靠人盯。<br><strong>最疼的事</strong>：后半夜水里溶氧突然下降，发现晚了就是整塘翻塘。</p>
+  </article>
+  <article class="card brand">
+    <h3>业务二 · 县级储备粮库（保命的业务）</h3>
+    <p><strong>怎么经营</strong>：多座平房仓（部分是改造过的老仓），替政府管储备粮，受县级粮食主管部门监管。<br><strong>日常流程</strong>：粮情监测 → 通风/气调 → 出入库 → 向监管报送。<br><strong>现在怎么做</strong>：保管员定期踏仓巡检，凭经验开关通风窗，台账人工登记。<br><strong>最疼的事</strong>：粮堆发热结露发现晚；熏蒸杀虫期间有人误入仓房；报表报送靠手工。</p>
+  </article>
+</div>
+
+<div class="grid g2 mt-2">
+  <article class="card">
+    <h3>已有家底 · 渔业侧</h3>
+    <p>水质多参数传感器（溶氧/pH/水温）· 食台高清摄像头 · 增氧机 · 智能控制柜（号称可远程启停）· 跨塘索道＋移动料仓 · 气象站 · 渔业溯源软件（远程开关设备、超限报警、数据看板）</p>
+  </article>
+  <article class="card">
+    <h3>已有家底 · 粮库侧</h3>
+    <p>仓内分层温湿度传感器 · 智能电动通风窗 · 环流风机 · 气调储粮系统 · 智能地磅＋车辆 RFID · 库区视频监控 · 门禁/熏蒸/气体检测装置 · 粮库一卡通系统（粮情、设备控制、出入库台账）</p>
+  </article>
+</div>
+
+<div class="note warn mt-2"><strong>家底的成色要说清楚</strong>：「设备装了」只是对方材料里的说法。每样设备都要过四关才算真能用上——<strong>①现场确实在 → ②能读到数据 → ③接口能对接 → ④拿到操作授权</strong>。目前没有任何一样走完这四关；尤其粮库那些控制设备，还需要原系统厂商点头。这正是第二轮调研要去干的事。</div>
+
+<div class="tbl-wrap mt-2">
+  <table>
+    <caption>当前痛点清单（AI 要解决的问题）</caption>
+    <thead><tr><th scope="col">板块</th><th scope="col">痛点</th><th scope="col">现在的样子</th></tr></thead>
+    <tbody>
+      <tr><td rowspan="4">渔业</td><td>夜间溶氧骤降，容易泛塘</td><td>阈值报警滞后，处置靠人半夜爬起来</td></tr>
+      <tr><td>投喂粗放，饵料浪费</td><td>定时定量投，不看长势、水质、天气</td></tr>
+      <tr><td>蟹病防治全凭老师傅经验</td><td>经验在人脑子里，人走了经验也走了</td></tr>
+      <tr><td>报表统计靠手工</td><td>各系统数据不通，人工汇总费时费力</td></tr>
+      <tr><td rowspan="5">粮库</td><td>粮情异常发现晚（发热/结露/虫害）</td><td>踏仓巡检间隔长，异常定位不到具体粮层</td></tr>
+      <tr><td>熏蒸期人员误入</td><td>现有手段有限，缺一道「软件提醒＋留痕」保险</td></tr>
+      <tr><td>老旧仓传感器读数漂移</td><td>不知道哪条数据可信，不敢据此做决定</td></tr>
+      <tr><td>出入库旺季账实不符</td><td>车辆、地磅、台账各记各的</td></tr>
+      <tr><td>通风气调凭经验、监管报送手工</td><td>开多少窗、吹多久靠感觉；报表格式的活儿重复做</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="note crit mt-2"><strong>一个最要害的未知数</strong>：粮库熏蒸区原本应该有一套「不靠电、不靠 AI」的机械式安全保护（比如加药期间门禁直接锁死）。这套东西<strong>到底装没装、是不是独立运行</strong>，目前没有任何证据。它决定了防误入场景能不能碰真实设备——核验清楚之前，这个场景只能用模拟器演示。</div>
+
+<section id="reqs" class="sec-head section-gap" data-nav-title="需求清单">
+  <div class="tag">03 · REQUIREMENTS</div>
+  <h2>需求清单（57 条逐项列出）</h2>
+  <p>需求分三档：<strong>底线能力</strong>（表中标 P0-BASE，9 条——不管选哪个场景都必须具备）、<strong>场景硬要求</strong>（标 P0-SCENE，19 条——选定某个场景后才对该场景构成硬验收）、<strong>加分项</strong>（标 P1，29 条——锦上添花，不挡验收）。当前所有条目都处于「听对方说有、还没亲眼见」的状态。</p>
+</section>
+
+<div class="tbl-wrap">
+  <table>
+    <caption>共用底座需求（10 条：底线能力九条 + 加分项一条）</caption>
+    <thead><tr><th scope="col">编号</th><th scope="col">需求名称</th><th scope="col">类别</th><th scope="col">档位</th><th scope="col">状态</th></tr></thead>
+    <tbody>
+      <tr><td>COMMON-AGT-001</td><td>AI 决策与调度中枢（底层用大语言模型）</td><td>智能决策</td><td><strong>底线</strong></td><td>可开发</td></tr>
+      <tr><td>COMMON-AGT-003</td><td>工具调用封装（统一操作设备和查数据的入口）</td><td>智能决策</td><td><strong>底线</strong></td><td>可开发</td></tr>
+      <tr><td>COMMON-INT-001</td><td>数据接入统一适配层（实时/回放/模拟三种来源）</td><td>接口</td><td><strong>底线</strong></td><td>待调研</td></tr>
+      <tr><td>COMMON-SAF-001</td><td>安全规则引擎（权限、熔断、合规检查）</td><td>安全</td><td><strong>底线</strong></td><td>可开发</td></tr>
+      <tr><td>COMMON-SAF-002</td><td>模块化权限隔离（渔业、粮库各自独立配置）</td><td>安全</td><td><strong>底线</strong></td><td>可开发</td></tr>
+      <tr><td>COMMON-SAF-003</td><td>数据缺失/不可信/设备异常时，禁止自动执行并转人工</td><td>安全</td><td><strong>底线</strong></td><td>可开发</td></tr>
+      <tr><td>COMMON-NFR-001</td><td>全流程留痕日志（谁在何时基于什么做了什么）</td><td>工程</td><td><strong>底线</strong></td><td>可开发</td></tr>
+      <tr><td>COMMON-NFR-002</td><td>AI 每次判断都给出人说得清的理由</td><td>工程</td><td><strong>底线</strong></td><td>可开发</td></tr>
+      <tr><td>COMMON-NFR-003</td><td>按场景设响应时限，超时自动转人工</td><td>工程</td><td><strong>底线</strong></td><td>待调研</td></tr>
+      <tr><td>COMMON-DAT-001</td><td>行业知识库框架（规则、案例、规程、标准）</td><td>数据</td><td>加分项</td><td>待调研</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="tbl-wrap mt-2">
+  <table>
+    <caption>空天渔场需求（21 条：场景硬要求六条 + 加分项十五条）</caption>
+    <thead><tr><th scope="col">编号</th><th scope="col">需求名称</th><th scope="col">类别</th><th scope="col">档位</th><th scope="col">状态</th></tr></thead>
+    <tbody>
+      <tr><td>FISH-SCN-001</td><td>夜间溶氧骤降预警与增氧联动</td><td>场景</td><td><strong>场景硬要求</strong></td><td>待可行性验证</td></tr>
+      <tr><td>FISH-AGT-001</td><td>AI 综合溶氧趋势/天气/塘口情况生成增氧策略</td><td>智能决策</td><td><strong>场景硬要求</strong></td><td>待接口验证</td></tr>
+      <tr><td>FISH-ALG-001</td><td>溶氧时序异常检测＋多源融合预测</td><td>算法</td><td><strong>场景硬要求</strong></td><td>待调研</td></tr>
+      <tr><td>FISH-INT-001</td><td>智能控制柜启停接口适配</td><td>接口</td><td><strong>场景硬要求</strong></td><td>待调研</td></tr>
+      <tr><td>FISH-DAT-001</td><td>分钟级水质数据接入</td><td>数据</td><td><strong>场景硬要求</strong></td><td>待调研</td></tr>
+      <tr><td>FISH-AGT-006</td><td>自动化等级调度（默认自动执行/白名单内全自动）</td><td>智能决策</td><td><strong>场景硬要求</strong></td><td>待调研</td></tr>
+      <tr><td>FISH-NFR-002</td><td>渔业决策响应时限（分钟级）</td><td>工程</td><td>加分项（场景 A 入选后升级）</td><td>待调研</td></tr>
+      <tr><td>FISH-SCN-002</td><td>动态投喂策略（生长＋水质＋天气＋摄像头残饵）</td><td>场景</td><td>加分项</td><td>待调研</td></tr>
+      <tr><td>FISH-AGT-002</td><td>AI 调度索道移动＋投喂参数寻优</td><td>智能决策</td><td>加分项</td><td>待调研</td></tr>
+      <tr><td>FISH-ALG-002</td><td>食台残饵图像识别＋生长模型</td><td>算法</td><td>加分项</td><td>待调研</td></tr>
+      <tr><td>FISH-INT-002</td><td>索道调度接口适配</td><td>接口</td><td>加分项</td><td>待调研</td></tr>
+      <tr><td>FISH-DAT-002</td><td>历史投喂/生长阶段/蟹苗品系数据</td><td>数据</td><td>加分项</td><td>待调研</td></tr>
+      <tr><td>FISH-SCN-003</td><td>蟹病辅助研判与案例沉淀</td><td>场景</td><td>加分项</td><td>待调研</td></tr>
+      <tr><td>FISH-AGT-003</td><td>知识检索＋AI 综合研判＋处置方案生成</td><td>智能决策</td><td>加分项</td><td>待调研</td></tr>
+      <tr><td>FISH-DAT-003</td><td>病害病例/规程/用药规范最小资料集</td><td>数据</td><td>加分项</td><td>待调研</td></tr>
+      <tr><td>FISH-SCN-004</td><td>全天候多模态风险预警（蓝藻/入侵/异常天气）</td><td>场景</td><td>加分项</td><td>待调研</td></tr>
+      <tr><td>FISH-AGT-004</td><td>风险等级＋影响范围＋处置优先级研判</td><td>智能决策</td><td>加分项</td><td>待调研</td></tr>
+      <tr><td>FISH-ALG-004</td><td>图像异常检测＋多源时序异常融合</td><td>算法</td><td>加分项</td><td>待调研</td></tr>
+      <tr><td>FISH-SCN-005</td><td>生产/设备/能耗/病害数据自动归集</td><td>场景</td><td>加分项</td><td>待调研</td></tr>
+      <tr><td>FISH-AGT-005</td><td>自然语言查数＋报告自动生成</td><td>智能决策</td><td>加分项</td><td>待调研</td></tr>
+      <tr><td>FISH-DAT-004</td><td>跨平台数据口径统一治理</td><td>数据</td><td>加分项</td><td>待调研</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="tbl-wrap mt-2">
+  <table>
+    <caption>无人化粮库需求（26 条：场景硬要求十三条 + 加分项十三条）</caption>
+    <thead><tr><th scope="col">编号</th><th scope="col">需求名称</th><th scope="col">类别</th><th scope="col">档位</th><th scope="col">状态</th></tr></thead>
+    <tbody>
+      <tr><td>GRAN-SCN-001</td><td>熏蒸期人员误入告警与安全联动</td><td>场景</td><td><strong>场景硬要求</strong></td><td>待可行性验证</td></tr>
+      <tr><td>GRAN-AGT-001</td><td>AI 融合门禁/视频/熏蒸状态做风险评估（只研判）</td><td>智能决策</td><td><strong>场景硬要求</strong></td><td>待接口验证</td></tr>
+      <tr><td>GRAN-ALG-001</td><td>视频中人员检测＋区域识别</td><td>算法</td><td><strong>场景硬要求</strong></td><td>待调研</td></tr>
+      <tr><td>GRAN-INT-001</td><td>门禁状态只读取数（绝不新增、修改或控制原联动）</td><td>接口</td><td><strong>场景硬要求</strong></td><td>待调研</td></tr>
+      <tr><td>GRAN-INT-002</td><td>视频监控实时流接入（只作软件辅助识别，不作安全链路的必要输入）</td><td>接口</td><td><strong>场景硬要求</strong></td><td>待调研</td></tr>
+      <tr><td>GRAN-AGT-008</td><td>熏蒸处置建议生成（说明/通知/流程）</td><td>智能决策</td><td><strong>场景硬要求</strong></td><td>待调研</td></tr>
+      <tr><td>GRAN-SAF-002</td><td>关键信息缺失时自动转入更保守的策略</td><td>安全</td><td><strong>场景硬要求</strong></td><td>待调研</td></tr>
+      <tr><td>GRAN-SCN-002</td><td>粮情超前研判（分层温湿度＋机理＋趋势）</td><td>场景</td><td><strong>场景硬要求</strong></td><td>待可行性验证</td></tr>
+      <tr><td>GRAN-AGT-002</td><td>异常粮层定位＋风险等级输出</td><td>智能决策</td><td><strong>场景硬要求</strong></td><td>待调研</td></tr>
+      <tr><td>GRAN-ALG-002</td><td>热湿传导机理校核＋时序分析</td><td>算法</td><td><strong>场景硬要求</strong></td><td>待调研</td></tr>
+      <tr><td>GRAN-DAT-001</td><td>仓内分层温湿度＋仓外气象＋仓房参数＋历史粮情</td><td>数据</td><td><strong>场景硬要求</strong></td><td>待调研</td></tr>
+      <tr><td>GRAN-DAT-002</td><td>老旧仓传感器漂移识别＋可信度打分</td><td>数据</td><td><strong>场景硬要求</strong></td><td>待调研</td></tr>
+      <tr><td>GRAN-AGT-003</td><td>可信度低的数据自动拦住高风险动作</td><td>智能决策</td><td><strong>场景硬要求</strong></td><td>待调研</td></tr>
+      <tr><td>GRAN-NFR-002</td><td>粮库决策响应时限（小时级/安防秒级）</td><td>工程</td><td>加分项（场景入选后升级）</td><td>待调研</td></tr>
+      <tr><td>GRAN-SCN-003</td><td>通风窗口/气调参数智能寻优</td><td>场景</td><td>加分项</td><td>待调研</td></tr>
+      <tr><td>GRAN-AGT-004</td><td>AI 推荐通风/气调参数并根据效果反馈调整</td><td>智能决策</td><td>加分项</td><td>待调研</td></tr>
+      <tr><td>GRAN-ALG-003</td><td>多因子寻优模型＋调控效果评估</td><td>算法</td><td>加分项</td><td>待调研</td></tr>
+      <tr><td>GRAN-INT-003</td><td>通风窗/风机/气调系统控制接口</td><td>接口</td><td>加分项</td><td>待调研</td></tr>
+      <tr><td>GRAN-SCN-004</td><td>出入库自主协同调度＋账实一致</td><td>场景</td><td>加分项</td><td>待调研</td></tr>
+      <tr><td>GRAN-AGT-005</td><td>AI 任务规划＋车辆/设备/仓房分配</td><td>智能决策</td><td>加分项</td><td>待调研</td></tr>
+      <tr><td>GRAN-INT-004</td><td>一卡通/地磅/RFID/平仓机器人联动</td><td>接口</td><td>加分项</td><td>待调研</td></tr>
+      <tr><td>GRAN-DAT-003</td><td>损耗/能耗/药剂/运维成本归一统计</td><td>数据</td><td>加分项</td><td>待调研</td></tr>
+      <tr><td>GRAN-AGT-006</td><td>自然语言查数＋监管报送字段自动生成</td><td>智能决策</td><td>加分项</td><td>待调研</td></tr>
+      <tr><td>GRAN-SCN-005</td><td>库区多模态安防（烟火/翻越/违章/乱停）</td><td>场景</td><td>加分项</td><td>待调研</td></tr>
+      <tr><td>GRAN-AGT-007</td><td>异常事件研判＋标准化处置预案匹配</td><td>智能决策</td><td>加分项</td><td>待调研</td></tr>
+      <tr><td>GRAN-DAT-004</td><td>安全管理知识库＋应急处置预案</td><td>数据</td><td>加分项</td><td>待调研</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="note info mt-2">更远的实验性能力（提前一天预测溶氧、病害提前预警、传感器自我校准、全局最优调度等）明确不放进本期 Demo，避免承诺兑现不了的东西。</div>
+
+<section id="demos" class="sec-head section-gap" data-nav-title="Demo 清单">
+  <div class="tag">04 · CANDIDATES</div>
+  <h2>可执行 Demo 清单（6 个候选全景）</h2>
+  <p>六个候选按三把尺子一起量：<strong>有没有现成的验收样板</strong>（没样板的场景容易验收扯皮）、<strong>拿不到真实设备时能不能先把软件跑起来</strong>、<strong>有多依赖现场核验的结论</strong>。</p>
+</section>
+
+<div class="tbl-wrap">
+  <table>
+    <caption>候选项目评估与去留</caption>
+    <thead><tr><th scope="col">候选</th><th scope="col">主题（模块）</th><th scope="col">验收样板</th><th scope="col">无真实设备可先行</th><th scope="col">对现场核验的依赖</th><th scope="col">结论</th></tr></thead>
+    <tbody>
+      <tr><td><strong>A</strong></td><td>夜间溶氧骤降预警＋增氧联动（渔业）</td><td class="ok"><span class="b-pill ok">有现成样板</span></td><td class="ok"><span class="b-pill ok">完全可以</span></td><td class="ok"><span class="b-pill ok">依赖低</span></td><td class="ok"><span class="b-pill ok">入选 · 主落点</span></td></tr>
+      <tr><td><strong>B</strong></td><td>熏蒸期人员误入告警与安全联动（粮库）</td><td class="ok"><span class="b-pill ok">有现成样板</span></td><td class="mid"><span class="b-pill mid">部分可以</span></td><td class="no"><span class="b-pill no">高 · 取决于安全保护核验</span></td><td class="ok"><span class="b-pill ok">入选 · 并行双模式</span></td></tr>
+      <tr><td><strong>C</strong></td><td>粮情超前研判（粮库）</td><td class="no"><span class="b-pill no">没有样板</span></td><td class="ok"><span class="b-pill ok">可以</span></td><td class="ok"><span class="b-pill ok">依赖低</span></td><td class="mid"><span class="b-pill mid">储备</span></td></tr>
+      <tr><td><strong>D</strong></td><td>索道动态投喂（渔业）</td><td class="no"><span class="b-pill no">没有</span></td><td class="no"><span class="b-pill no">难</span></td><td class="mid"><span class="b-pill mid">中等</span></td><td class="no"><span class="b-pill no">不入选 · 以后再说</span></td></tr>
+      <tr><td><strong>E</strong></td><td>出入库自主协同调度（粮库）</td><td class="no"><span class="b-pill no">没有</span></td><td class="mid"><span class="b-pill mid">一般</span></td><td class="mid"><span class="b-pill mid">中等</span></td><td class="no"><span class="b-pill no">不入选 · 以后再说</span></td></tr>
+      <tr><td><strong>F</strong></td><td>库区多模态安防＋应急处置（粮库）</td><td class="no"><span class="b-pill no">没有</span></td><td class="mid"><span class="b-pill mid">一般</span></td><td class="mid"><span class="b-pill mid">中等</span></td><td class="no"><span class="b-pill no">不入选 · 以后再说</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="note info mt-2">说明两点：①「现场核验」主要指两件事——粮库熏蒸区原有的机械式安全保护是否真实存在、甲方能否给出书面授权和责任人名单；② D 不入选是因为索道协议没确认且行业里几乎没有先例，E 牵涉钱和账太敏感，F 缺企业应急预案且视频按规定不能进安全链路。</div>
+
+<section id="direction" class="sec-head section-gap" data-nav-title="推荐落点">
+  <div class="tag">05 · DECISION</div>
+  <h2>推荐 Demo 方向与选择理由</h2>
+  <p>工作版决定：<strong>A 主落点 ＋ B 并行落点（双模式设计）＋ C 储备</strong>；D/E/F 不入选。</p>
+</section>
+
+<div class="grid g3">
+  <article class="card hl">
+    <h3>主落点 A · 夜间缺氧预警</h3>
+    <p><strong>为什么是它</strong>：行业里「溶氧低了开增氧机」已是普遍做法，光做这一步不稀奇。我们的差异在于——<strong>把水质、天气、塘口情况放在一起综合判断</strong>；机器先小步自动执行、超出范围立刻转人工；每次开关机都有记录可查；系统自己出故障时宁可不动也不乱动。这些恰恰是市面产品没做好的空白点，而且整个场景不依赖任何现场核验结论，模拟数据就能全程演示。红线：不承诺「提前一天精准预测」这种做不到的事。</p>
+  </article>
+  <article class="card brand">
+    <h3>并行落点 B · 熏蒸防误入（双模式）</h3>
+    <p><strong>为什么要带上它</strong>：只演示渔业，证明不了「一套底座、两种场景」的架构主张；而「AI 只当参谋、绝不替代安全装置」正是本项目最大的卖点，行业里也有同类标杆（保险公司的水产预警服务、熏蒸门禁联锁专利）验证过方向。<strong>两种模式</strong>：现场核验通过 → 只读真实门禁和气体信号做验证；拿不到 → 用独立模拟器完整演示全部逻辑，界面上大大方方标「模拟」。无论哪种模式，AI 都不碰安全执行链。</p>
+  </article>
+  <article class="card gold">
+    <h3>储备落点 C · 粮情研判</h3>
+    <p><strong>什么时候启用</strong>：甲方明确要求粮库侧加重分量，或者 B 场景因安全保护长期核验不清被否。<strong>启用前提</strong>：要先补一套自定义验收标准（现成样板只有 A 和 B 有），并且至少拿到一段连续的历史温湿度数据。好处是纯给建议、不碰设备，风险最小。</p>
+  </article>
+</div>
+
+<div class="tbl-wrap mt-2">
+  <table>
+    <caption>落点固化前置事项（待甲方确认）</caption>
+    <thead><tr><th scope="col">事项</th><th scope="col">影响</th><th scope="col">当前处理</th></tr></thead>
+    <tbody>
+      <tr><td>Demo 做一个场景还是两个</td><td>决定 A+B 组合还是收缩为只做 A</td><td>先按两个推进，访谈时问甲方</td></tr>
+      <tr><td>预算与时间窗</td><td>大模型买服务还是私有部署；模拟器投入多少</td><td>访谈时问甲方</td></tr>
+      <tr><td>验收签字人是谁</td><td>没有签字人，落点定不下来</td><td>随第一批资料请求催收</td></tr>
+      <tr><td>C 场景要不要转正</td><td>储备落点是否激活</td><td>第十周初评时定</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<section id="tech" class="sec-head section-gap" data-nav-title="技术方案">
+  <div class="tag">06 · TECHNICAL PLAN</div>
+  <h2>推荐落点的技术方案（详见新增 01 号文件）</h2>
+  <p>总纲：<strong>一个共用底座 ＋ 两条场景链路 ＋ 三种数据来源 ＋ 双模式安全设计</strong>；手上一份现场证据都没有，也能今天开工。</p>
+</section>
+
+<div class="tbl-wrap">
+  <table>
+    <caption>共用底座五大组件（对应九条底线能力）</caption>
+    <thead><tr><th scope="col">组件</th><th scope="col">干什么用</th><th scope="col">关键设计</th></tr></thead>
+    <tbody>
+      <tr><td>数据入口适配层</td><td>把各种来源的数据变成统一格式喂给 AI</td><td>支持四种来源：假数据、历史回放、模拟器、真实接口；<strong>每个数字都带来源标签</strong>，屏幕和日志都写明真假；真实接口出问题自动切回模拟，不中断演示</td></tr>
+      <tr><td>AI 大脑（决策中枢）</td><td>综合各方信息做判断、安排任务</td><td>大模型只做「综合判断」，专业计算交给专门的小模型；封装五类工具：查数据、查事件、看视频、控制设备（仅限业务类）、通知人（仅提醒）；每次判断输出「结论＋理由＋依据了哪些数据」</td></tr>
+      <tr><td>安全刹车（规则引擎）</td><td>AI 的每个动作执行前先过安检</td><td>四道检查依次过：有没有权限 → 数据可不可信 → 设备正不正常 → 合不合规；<strong>刹车系统自己坏了就全部停办</strong>（宁可不做，不可乱做）；缺数据、数据可疑、设备掉线等五种情况一律转成「只提醒人工」</td></tr>
+      <tr><td>时限管理</td><td>保证 AI 响应不过夜</td><td>渔业问题分钟内必须响应、粮库小时级、安防秒级；超时不执行原动作，自动转人工并记录</td></tr>
+      <tr><td>记录与解释</td><td>让每一步都可回查、可对人讲清楚</td><td>所有动作只读存档、防篡改（含粮库安全装置独立触发的记录）；每次决策附判断背景、引用数据、命中规则</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="grid g2 mt-2">
+  <article class="card hl">
+    <h3>场景 A 怎么跑 · 夜间缺氧（主落点）</h3>
+    <p><strong>第一步</strong>：溶氧/pH/水温按分钟喂进来（先用回放或模拟数据）＋公开天气预报。<br><strong>第二步</strong>：先用简单可靠的统计方法发现异常（某时段均值突然往下掉），之后再加更聪明的预测模型。<br><strong>第三步</strong>：AI 综合趋势、天气、塘口情况，给出风险等级和增氧方案。<br><strong>第四步</strong>：安全刹车放行后，向模拟控制柜下发开关指令，并回读确认真的开了。<br><strong>第五步</strong>：全过程留痕，屏幕上能看到「为什么开、开了多久、依据是什么」。预置三种夜间剧本（缓降/骤降/波动）供反复演示。</p>
+  </article>
+  <article class="card good">
+    <h3>场景 B 怎么跑 · 熏蒸防误入（双模式）</h3>
+    <p><strong>输入</strong>：门禁和气体状态信号（只读）＋监控视频（只用来辅助识别，不进安全链路）。核验没通过前，全部用模拟器和录播视频。<br><strong>识别</strong>：视频里检测到人进入禁区（先对录播样本离线识别，稳定后再接实时）。<br><strong>研判</strong>：AI 把「门开了没有、正在熏蒸吗、画面里有没有人」放一起判断风险；<strong>任何一路信息断了，就自动按更糟的情况处理</strong>——宁可十次虚惊，不可一次漏报。<br><strong>输出</strong>：给保管员发提醒、生成处置说明、全程留痕。<br><strong>边界</strong>：原有的机械安全保护独立运行，AI 不装上去、不改它、不控它——演示时明确展示这条线。</p>
+  </article>
+</div>
+
+<div class="tbl-wrap mt-2">
+  <table>
+    <caption>安全测试用例（15 条 · 第四、五周冻结，全部通过才算数）</caption>
+    <thead><tr><th scope="col">编号</th><th scope="col">故意制造什么故障</th><th scope="col">系统必须做到</th><th scope="col">考察哪条能力</th></tr></thead>
+    <tbody>
+      <tr><td>N01</td><td>A 场景 · 溶氧数据没了</td><td>拦下增氧动作，转人工提醒</td><td>缺数据强制降级</td></tr>
+      <tr><td>N02</td><td>A 场景 · 传感器失联</td><td>拦下动作并记录</td><td>缺数据强制降级</td></tr>
+      <tr><td>N03</td><td>A 场景 · 读数飘了</td><td>判为不可信，拦截并降级</td><td>数据可信度检查</td></tr>
+      <tr><td>N04</td><td>A 场景 · 控制柜断线</td><td>拦下动作并记录</td><td>设备状态检查</td></tr>
+      <tr><td>N05</td><td>A 场景 · 接口迟迟不应答</td><td>超时转人工</td><td>时限管理</td></tr>
+      <tr><td>N06</td><td>A 场景 · 试图操作白名单外的设备</td><td>拒绝</td><td>权限隔离</td></tr>
+      <tr><td>N07</td><td>A 场景 · 试图越级全自动操作</td><td>拒绝</td><td>权限隔离</td></tr>
+      <tr><td>N08</td><td>B 场景 · 视频信号断了</td><td>按更糟情况处理＋立即通知</td><td>缺输入更保守</td></tr>
+      <tr><td>N09</td><td>B 场景 · 门禁信号飘了</td><td>按更糟情况处理＋立即通知</td><td>缺输入更保守</td></tr>
+      <tr><td>N10</td><td>B 场景 · 画面识别没把握</td><td>绝不说「安全」，升级通知</td><td>缺输入更保守</td></tr>
+      <tr><td>N11</td><td>B 场景 · 试图写门禁</td><td>一律拒绝（只读铁律）</td><td>只读边界</td></tr>
+      <tr><td>N12</td><td>B 场景 · 试图写联动设备</td><td>一律拒绝（只读铁律）</td><td>只读边界</td></tr>
+      <tr><td>N13</td><td>安全刹车系统自身故障</td><td>全部动作拒绝执行</td><td>故障即停机</td></tr>
+      <tr><td>N14</td><td>改了渔业的权限配置</td><td>粮库的限制一点不变</td><td>模块隔离</td></tr>
+      <tr><td>N15</td><td>试图篡改留痕日志</td><td>篡改失败被拒</td><td>日志防改</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="tbl-wrap mt-2">
+  <table>
+    <caption>技术选型建议（工作版 · 预算确认后冻结）</caption>
+    <thead><tr><th scope="col">用什么</th><th scope="col">首选</th><th scope="col">备选</th><th scope="col">说明</th></tr></thead>
+    <tbody>
+      <tr><td>大模型</td><td>国产大模型云服务（先跑起来）</td><td>私有化部署</td><td>等预算结论；架构上预留随时替换的空间</td></tr>
+      <tr><td>AI 编排框架</td><td>成熟开源框架</td><td>自研轻量版</td><td>优先考虑工具调用能力和留痕友好</td></tr>
+      <tr><td>溶氧异常检测</td><td>统计基线＋规则（简单可靠）</td><td>时序预测模型</td><td>先简后繁；验收不赌预测精度</td></tr>
+      <tr><td>视频识人</td><td>开源人形检测模型</td><td>云端视觉服务</td><td>先对录播视频离线跑，实时流后置</td></tr>
+      <tr><td>数据存储</td><td>轻量时序数据库＋文件存储</td><td>—</td><td>够存分钟级数据和视频样本就行</td></tr>
+      <tr><td>演示界面</td><td>网页看板（曲线＋决策卡片＋留痕查询＋真假角标）</td><td>—</td><td>「AI 为什么这么判」主要在这里给人看</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<section id="handover" class="sec-head section-gap" data-nav-title="交接清单">
+  <div class="tag">07 · HANDOVER</div>
+  <h2>推荐落点的交接文件清单（请甲方提供的 10 样东西）</h2>
+  <p>只列 Demo 运行必需项，每样写清「谁提供、什么格式、什么时候给」，并配好「给不了时的替身方案」——所以任何一项延误都不会卡死主线。</p>
+</section>
+
+<div class="tbl-wrap">
+  <table>
+    <caption>最小交接集（12 号文件 · 请求基线）</caption>
+    <thead><tr><th scope="col">编号</th><th scope="col">要什么</th><th scope="col">类型</th><th scope="col">最少要到什么程度</th><th scope="col">给不了怎么办</th></tr></thead>
+    <tbody>
+      <tr><td>A-01</td><td>水质传感器数据流</td><td>设备类</td><td>测点清单＋至少 24 小时带时间的真实读数＋采样间隔说明</td><td>用回放包或模拟器造数</td></tr>
+      <tr><td>A-02</td><td>增氧机控制柜接口</td><td>设备类</td><td>控制柜型号/协议/寄存器表＋一个只读账号（能看状态，不能操作）</td><td>用设备模拟器</td></tr>
+      <tr><td>A-03</td><td>溯源系统历史数据</td><td>软件类</td><td>只读接口或数据库说明＋字段字典＋至少 30 天导出样本</td><td>脱敏表格＋假数据层</td></tr>
+      <tr><td>A-04</td><td>气象数据接入</td><td>软件类</td><td>字段、采样频率、接入方式说明</td><td>公开气象数据代替</td></tr>
+      <tr><td>B-01</td><td>门禁/熏蒸/气体状态信号</td><td>设备类（只读）</td><td>现场核验结论（原有机械安全保护确实存在）＋信号点位表＋只读取数方式；<strong>绝不写入</strong></td><td>独立模拟器（默认模式）</td></tr>
+      <tr><td>B-02</td><td>视频实时流</td><td>软件类</td><td>视频流地址样例＋摄像头覆盖区域清单；只用于辅助识别</td><td>录播视频样本＋离线识别</td></tr>
+      <tr><td>C-01</td><td>责任人名单与验收签字人</td><td>授权类</td><td>业务/系统/安全/授权/验收五类角色的书面名单</td><td>没有名单就无法现场核验，全走模拟</td></tr>
+      <tr><td>C-02</td><td>只读账号与网络通路</td><td>授权类</td><td>两套系统各一个只读账号＋访问方式说明</td><td>用假数据/回放</td></tr>
+      <tr><td>C-03</td><td>模拟操作的书面许可</td><td>授权类</td><td>书面许可写清允许动哪些设备、边界在哪、如何撤回</td><td>全走模拟，不申请真实操作权限</td></tr>
+      <tr><td>C-04</td><td>安全规程与作业守则</td><td>知识类</td><td>企业版应急预案文件（带版本号）</td><td>先用行业通用守则顶替，并明确标注「非企业版」</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="tl mt-2">
+  <div class="tl-item"><strong>第 1–2 周</strong>　把资料请求包正式发给甲方，回收后对照上面十项登记</div>
+  <div class="tl-item"><strong>第 3–6 周</strong>　现场核验：抽测水质传感器、查验熏蒸区安全保护 → 据此定 B 场景用真实模式还是模拟模式</div>
+  <div class="tl-item"><strong>第 4–10 周</strong>　历史数据和视频样例陆续接入，假数据逐项换成真数据</div>
+  <div class="tl-item"><strong>第 10/12 周</strong>　交接齐不齐做个盘点 → 定下最终集成验证范围 → 清单升级为双方签字的交接契约</div>
+</div>
+
+<div class="verdict">
+  <div class="lbl">VERDICT</div>
+  <h3>落点已定：渔场夜间缺氧主打 ＋ 粮库熏蒸防误入并行，今天就能开工</h3>
+  <p>七个阶段的工作成果全部就绪；57 条需求逐项列清，6 个候选用三把尺子量完，15 条安全测试逐条可验。企业现状的关键事实是：<strong>设备是「听说有」，数据是「没见过」，授权是「没拿到」</strong>——所以整套方案按「先用模拟数据跑通、拿到真证据逐项替换」设计，任何一项资料延误都不卡主线。下一步两件事并行：① 开发线本周动工（AI 底座＋安全刹车＋模拟器，四周内两个场景都能模拟演示）；② 把十项资料请求发给甲方，第六周前拿到安全保护核验结论。等甲方确认场景数量、预算和签字人，落点从「工作版」升级为「已选定」，交接清单升级为契约。</p>
+</div>
+    </div>
+    <div id="report-trace-root"></div>
+    <footer class="report-footer">内部汇报 · 基于 2026-08-21 工作区快照 · 含企业现状画像 · 需求/测试/选型均逐项列表</footer>
+  </main>
+</div>
+<div id="report-trace-data" style="display:none"></div>
+<script id="report-runtime">
+(function () {
+  'use strict';
+
+  var VERSION = '3.1.0';
+  var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var simulatorTimers = new WeakMap();
+
+  document.documentElement.classList.add('report-js');
+  document.documentElement.setAttribute('data-report-ds-version', VERSION);
+
+  function onReady(fn) {
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn, { once: true });
+    else fn();
+  }
+
+  function panelsForBar(bar) {
+    var panels = [];
+    var sibling = bar.nextElementSibling;
+    while (sibling && sibling.classList && (sibling.classList.contains('tab-pane') || sibling.classList.contains('tab-panel'))) {
+      panels.push(sibling);
+      sibling = sibling.nextElementSibling;
+    }
+    if (panels.length) return panels;
+    var root = bar.closest('.tab-set');
+    if (!root) return panels;
+    return Array.prototype.filter.call(root.children, function (child) {
+      return child.classList && (child.classList.contains('tab-pane') || child.classList.contains('tab-panel'));
+    });
+  }
+
+  function initTabSet(bar, setIndex) {
+    var selector = bar.classList.contains('tabs') ? '.tb' : '.tab';
+    var tabs = Array.prototype.slice.call(bar.querySelectorAll(selector));
+    var panels = panelsForBar(bar);
+    if (!tabs.length || !panels.length) return;
+
+    var setId = 'report-tabs-' + setIndex;
+    bar.setAttribute('role', 'tablist');
+    bar.setAttribute('aria-label', bar.getAttribute('aria-label') || '内容视图');
+
+    function keyForTab(tab, index) {
+      return tab.getAttribute('data-tab') || String(index);
+    }
+
+    function keyForPanel(panel, index) {
+      return panel.getAttribute('data-pane') || String(index);
+    }
+
+    function activate(tab, moveFocus) {
+      var index = tabs.indexOf(tab);
+      if (index < 0) return;
+      var key = keyForTab(tab, index);
+      tabs.forEach(function (item, itemIndex) {
+        var active = item === tab;
+        item.classList.toggle('active', active);
+        item.setAttribute('aria-selected', String(active));
+        item.setAttribute('tabindex', active ? '0' : '-1');
+        if (!item.id) item.id = setId + '-tab-' + itemIndex;
+      });
+      panels.forEach(function (panel, panelIndex) {
+        var active = keyForPanel(panel, panelIndex) === key;
+        panel.classList.toggle('active', active);
+        panel.hidden = !active;
+        panel.setAttribute('aria-hidden', String(!active));
+        if (!panel.id) panel.id = setId + '-panel-' + panelIndex;
+        if (active) {
+          panel.setAttribute('aria-labelledby', tab.id);
+          tab.setAttribute('aria-controls', panel.id);
+        }
+      });
+      if (moveFocus) tab.focus();
+      bar.dispatchEvent(new CustomEvent('report:tabchange', { bubbles: true, detail: { key: key } }));
+    }
+
+    tabs.forEach(function (tab, index) {
+      tab.setAttribute('role', 'tab');
+      if (tab.tagName === 'BUTTON' && !tab.getAttribute('type')) tab.setAttribute('type', 'button');
+      if (!tab.id) tab.id = setId + '-tab-' + index;
+      tab.addEventListener('click', function () { activate(tab, false); });
+      tab.addEventListener('keydown', function (event) {
+        var nextIndex = index;
+        if (event.key === 'ArrowRight' || event.key === 'ArrowDown') nextIndex = (index + 1) % tabs.length;
+        else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') nextIndex = (index - 1 + tabs.length) % tabs.length;
+        else if (event.key === 'Home') nextIndex = 0;
+        else if (event.key === 'End') nextIndex = tabs.length - 1;
+        else if (event.key === 'Enter' || event.key === ' ') nextIndex = index;
+        else return;
+        event.preventDefault();
+        activate(tabs[nextIndex], true);
+      });
+    });
+
+    panels.forEach(function (panel, index) {
+      panel.setAttribute('role', 'tabpanel');
+      if (!panel.id) panel.id = setId + '-panel-' + index;
+    });
+    tabs.forEach(function (tab, index) {
+      var key = keyForTab(tab, index);
+      var panel = panels.find(function (candidate, panelIndex) { return keyForPanel(candidate, panelIndex) === key; });
+      if (!panel) return;
+      tab.setAttribute('aria-controls', panel.id);
+      panel.setAttribute('aria-labelledby', tab.id);
+      if (!panel.getAttribute('data-print-title')) panel.setAttribute('data-print-title', tab.textContent.trim());
+    });
+
+    activate(tabs.find(function (tab) { return tab.classList.contains('active'); }) || tabs[0], false);
+  }
+
+  function initTabs() {
+    document.querySelectorAll('.tabs,.tabbar').forEach(function (bar, index) {
+      initTabSet(bar, index);
+    });
+  }
+
+  function formatNumber(value, decimals) {
+    try {
+      return new Intl.NumberFormat('zh-CN', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      }).format(value);
+    } catch (_) {
+      return value.toFixed(decimals);
+    }
+  }
+
+  function initCounters() {
+    var jobs = [];
+    document.querySelectorAll('.counter[data-target]').forEach(function (el) {
+      jobs.push(new Promise(function (resolve) {
+        var raw = el.getAttribute('data-target') || '0';
+        var target = Number(raw);
+        if (!Number.isFinite(target)) { resolve(); return; }
+        var decimalsAttr = el.getAttribute('data-decimals');
+        var inferredDecimals = Math.min(6, (raw.split('.')[1] || '').length);
+        var decimalsValue = decimalsAttr === null ? inferredDecimals : Number(decimalsAttr);
+        var decimals = Number.isFinite(decimalsValue) ? Math.max(0, Math.min(6, Math.floor(decimalsValue))) : inferredDecimals;
+        var prefix = el.getAttribute('data-prefix') || '';
+        var suffix = el.getAttribute('data-suffix') || '';
+        var durationAttr = el.getAttribute('data-duration');
+        var durationValue = durationAttr === null ? 1100 : Number(durationAttr);
+        var duration = Number.isFinite(durationValue) ? Math.max(0, Math.min(10000, durationValue)) : 1100;
+        var finalText = prefix + formatNumber(target, decimals) + suffix;
+        el.setAttribute('aria-label', finalText);
+
+        if (reducedMotion || duration === 0) {
+          el.textContent = finalText;
+          resolve();
+          return;
+        }
+
+        var start = performance.now();
+        function step(now) {
+          var progress = Math.min((now - start) / duration, 1);
+          var eased = 1 - Math.pow(1 - progress, 3);
+          el.textContent = prefix + formatNumber(target * eased, decimals) + suffix;
+          if (progress < 1) requestAnimationFrame(step);
+          else { el.textContent = finalText; resolve(); }
+        }
+        requestAnimationFrame(step);
+      }));
+    });
+    return Promise.all(jobs);
+  }
+
+  function initProgress() {
+    document.querySelectorAll('.anim-bar').forEach(function (bar) {
+      var width = bar.style.getPropertyValue('--w') || getComputedStyle(bar).getPropertyValue('--w') || '0%';
+      var value = Math.max(0, Math.min(100, parseFloat(width) || 0));
+      var row = bar.closest('.bar-row');
+      var label = row && row.querySelector('.lbl') ? row.querySelector('.lbl').textContent.trim() : '进度';
+      bar.setAttribute('role', 'progressbar');
+      bar.setAttribute('aria-label', label);
+      bar.setAttribute('aria-valuemin', '0');
+      bar.setAttribute('aria-valuemax', '100');
+      bar.setAttribute('aria-valuenow', String(value));
+      if (reducedMotion) bar.classList.add('armed');
+      else setTimeout(function () { bar.classList.add('armed'); }, 180);
+    });
+  }
+
+  function initTableRegions() {
+    document.querySelectorAll('.tbl-wrap').forEach(function (wrap, index) {
+      var caption = wrap.querySelector('caption');
+      if (!wrap.hasAttribute('tabindex')) wrap.setAttribute('tabindex', '0');
+      if (!wrap.hasAttribute('role')) wrap.setAttribute('role', 'region');
+      if (!wrap.hasAttribute('aria-label')) {
+        wrap.setAttribute('aria-label', caption && caption.textContent.trim() ? caption.textContent.trim() : '可横向滚动的数据表格 ' + (index + 1));
+      }
+    });
+  }
+
+  function initTooltips() {
+    document.querySelectorAll('.tip').forEach(function (tip, index) {
+      var box = tip.querySelector('.tipbox');
+      if (!box) return;
+      if (!box.id) box.id = 'report-tip-' + index;
+      box.setAttribute('role', 'tooltip');
+      var trigger = tip.querySelector('a,button,input,select,textarea,[tabindex]') || tip;
+      if (trigger === tip && !tip.hasAttribute('tabindex')) tip.setAttribute('tabindex', '0');
+      var describedBy = (trigger.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
+      if (describedBy.indexOf(box.id) < 0) describedBy.push(box.id);
+      trigger.setAttribute('aria-describedby', describedBy.join(' '));
+    });
+  }
+
+  var printDetailsState = null;
+  function expandDetailsForPrint() {
+    if (printDetailsState) return;
+    printDetailsState = Array.prototype.map.call(document.querySelectorAll('details'), function (node) {
+      var wasOpen = node.open;
+      node.open = true;
+      return { node: node, wasOpen: wasOpen };
+    });
+  }
+
+  function restoreDetailsAfterPrint() {
+    if (!printDetailsState) return;
+    printDetailsState.forEach(function (entry) { entry.node.open = entry.wasOpen; });
+    printDetailsState = null;
+  }
+
+  function initPrintExpansion() {
+    window.addEventListener('beforeprint', expandDetailsForPrint);
+    window.addEventListener('afterprint', restoreDetailsAfterPrint);
+  }
+
+  function markMermaidFallback(node, message) {
+    if (node.querySelector('svg')) return;
+    node.setAttribute('data-report-state', 'source');
+    var wrap = node.closest('.mermaid-wrap');
+    if (wrap && !wrap.querySelector('.mermaid-status')) {
+      var status = document.createElement('div');
+      status.className = 'mermaid-status';
+      status.setAttribute('role', 'status');
+      status.textContent = message;
+      wrap.insertBefore(status, node);
+    }
+  }
+
+  function loadMermaidDependency(timeoutMs) {
+    if (window.mermaid) return Promise.resolve(true);
+    var dependency = document.querySelector('meta[name="report-mermaid"]');
+    var src = dependency && dependency.getAttribute('content');
+    var integrity = dependency && dependency.getAttribute('data-sri');
+    if (!src || !integrity) return Promise.resolve(false);
+
+    document.documentElement.setAttribute('data-report-mermaid', 'loading');
+    return new Promise(function (resolve) {
+      var settled = false;
+      var script = document.createElement('script');
+      var finish = function (loaded, state) {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        script.onload = null;
+        script.onerror = null;
+        document.documentElement.setAttribute('data-report-mermaid', state);
+        resolve(loaded);
+      };
+      var timer = setTimeout(function () {
+        script.remove();
+        finish(false, 'timeout');
+      }, timeoutMs || 5000);
+      script.src = src;
+      script.integrity = integrity;
+      script.crossOrigin = 'anonymous';
+      script.async = true;
+      script.setAttribute('data-report-mermaid-loader', 'v1');
+      script.onload = function () { finish(Boolean(window.mermaid), window.mermaid ? 'loaded' : 'source'); };
+      script.onerror = function () { finish(false, 'source'); };
+      document.head.appendChild(script);
+    });
+  }
+
+  function whenWindowLoaded() {
+    if (document.readyState === 'complete') return Promise.resolve();
+    return new Promise(function (resolve) { window.addEventListener('load', resolve, { once: true }); });
+  }
+
+  function renderMermaidNodes(nodes) {
+    var nonceMeta = document.querySelector('meta[name="report-style-nonce"]');
+    var styleNonce = nonceMeta && nonceMeta.getAttribute('content');
+    return Promise.all(nodes.map(function (node, index) {
+      var source = node.textContent;
+      var renderId = 'report-mermaid-' + Date.now() + '-' + index;
+      return Promise.resolve(window.mermaid.render(renderId, source)).then(function (result) {
+        var svg = result.svg;
+        if (styleNonce) svg = svg.replace(/<style(?=[\s>])/g, '<style nonce="' + styleNonce + '"');
+        node.innerHTML = svg;
+        node.setAttribute('data-processed', 'true');
+        if (typeof result.bindFunctions === 'function') result.bindFunctions(node);
+      }).catch(function (error) {
+        node.textContent = source;
+        throw error;
+      });
+    }));
+  }
+
+  function initMermaid() {
+    var nodes = Array.prototype.slice.call(document.querySelectorAll('.mermaid:not([data-processed="true"])'));
+    if (!nodes.length) {
+      document.documentElement.setAttribute('data-report-mermaid', 'unused');
+      return Promise.resolve();
+    }
+    // Start the optional 3.5 MB dependency only after window.load so a slow
+    // CDN can never delay the report's initial document load.
+    return whenWindowLoaded().then(function () { return loadMermaidDependency(12000); }).then(function (loaded) {
+      if (!loaded || !window.mermaid) {
+        nodes.forEach(function (node) { markMermaidFallback(node, '图表引擎未在时限内加载，已保留 Mermaid 源码。'); });
+        document.documentElement.setAttribute('data-report-mermaid', 'source');
+        return;
+      }
+
+      try {
+        window.mermaid.initialize({
+          startOnLoad: false,
+          theme: 'base',
+          securityLevel: 'strict',
+          themeVariables: {
+            primaryColor: '#F5F0E4',
+            primaryTextColor: '#1F1D17',
+            primaryBorderColor: '#8B3A1F',
+            lineColor: '#5A5447',
+            secondaryColor: '#E8E1D2',
+            tertiaryColor: '#FAF7F0',
+            fontFamily: '-apple-system, "PingFang SC", "Microsoft YaHei", sans-serif',
+            fontSize: '13px'
+          },
+          flowchart: { curve: 'basis', useMaxWidth: true, htmlLabels: false },
+          sequence: { useMaxWidth: true, diagramMarginX: 20 },
+          pie: { useMaxWidth: true },
+          gantt: { useMaxWidth: true }
+        });
+        return renderMermaidNodes(nodes).then(function () {
+          document.documentElement.setAttribute('data-report-mermaid', 'rendered');
+        }).catch(function () {
+          nodes.forEach(function (node) { markMermaidFallback(node, '图表渲染失败，已保留 Mermaid 源码。'); });
+          document.documentElement.setAttribute('data-report-mermaid', 'source');
+        });
+      } catch (_) {
+        nodes.forEach(function (node) { markMermaidFallback(node, '图表渲染失败，已保留 Mermaid 源码。'); });
+        document.documentElement.setAttribute('data-report-mermaid', 'source');
+      }
+    });
+  }
+
+  function initNavigation() {
+    var nav = document.getElementById('report-nav');
+    var main = document.getElementById('report-main') || document.querySelector('.report-main');
+    if (!nav || !main) return;
+    nav.setAttribute('aria-label', nav.getAttribute('aria-label') || '报告目录');
+
+    if (!nav.children.length) {
+      var sections = main.querySelectorAll('section[id],.sec-head[id],[data-nav]');
+      var count = 0;
+      sections.forEach(function (section) {
+        var id = section.id || section.getAttribute('data-nav');
+        if (!id) return;
+        var heading = section.querySelector('h1,h2,h3');
+        var title = section.getAttribute('data-nav-title') || (heading && heading.textContent.trim()) || id;
+        var group = section.getAttribute('data-nav-group');
+        if (group) {
+          var groupNode = document.createElement('div');
+          groupNode.className = 'grp';
+          groupNode.textContent = group;
+          nav.appendChild(groupNode);
+        }
+        var link = document.createElement('a');
+        var number = document.createElement('span');
+        number.className = 'n';
+        number.textContent = String(count).padStart(2, '0');
+        link.href = '#' + id;
+        link.appendChild(number);
+        link.appendChild(document.createTextNode(' ' + title));
+        nav.appendChild(link);
+        count += 1;
+      });
+    }
+
+    var links = Array.prototype.slice.call(nav.querySelectorAll('a[href^="#"]'));
+    if (!links.length) return;
+
+    function setActive(link) {
+      links.forEach(function (item) {
+        var active = item === link;
+        item.classList.toggle('active', active);
+        if (active) item.setAttribute('aria-current', 'location');
+        else item.removeAttribute('aria-current');
+      });
+      if (window.innerWidth <= 960 && link) {
+        link.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'nearest', inline: 'nearest' });
+      }
+    }
+
+    links.forEach(function (link) {
+      link.addEventListener('click', function () { setActive(link); });
+    });
+    setActive(links.find(function (link) { return link.classList.contains('active'); }) || links[0]);
+
+    if ('IntersectionObserver' in window) {
+      var byId = {};
+      links.forEach(function (link) {
+        var rawId = link.hash.slice(1);
+        var id = rawId;
+        try { id = decodeURIComponent(rawId); } catch (_) { /* keep the literal, audit reports invalid ids */ }
+        byId[id] = link;
+      });
+      var observer = new IntersectionObserver(function (entries) {
+        var visible = entries.filter(function (entry) { return entry.isIntersecting; });
+        if (!visible.length) return;
+        visible.sort(function (a, b) { return a.boundingClientRect.top - b.boundingClientRect.top; });
+        var link = byId[visible[0].target.id];
+        if (link) setActive(link);
+      }, { rootMargin: '-10% 0px -55% 0px', threshold: [0.01, 0.25] });
+      Object.keys(byId).forEach(function (id) {
+        var target = document.getElementById(id);
+        if (target) observer.observe(target);
+      });
+    }
+  }
+
+  function clearSimulator(root) {
+    var timer = simulatorTimers.get(root);
+    if (timer) clearTimeout(timer);
+    simulatorTimers.delete(root);
+    root.querySelectorAll('.sim-step').forEach(function (step) {
+      step.classList.remove('run', 'fail');
+      step.removeAttribute('aria-current');
+      var glyph = step.querySelector('.glyph');
+      if (glyph) glyph.textContent = '○';
+    });
+    var finalMessage = root.querySelector('[data-sim-final]') || document.getElementById('simFinal');
+    if (finalMessage) {
+      finalMessage.textContent = '';
+      finalMessage.setAttribute('aria-live', 'polite');
+    }
+  }
+
+  function simRun(mode, rootId) {
+    var root = document.getElementById(rootId || 'simSteps');
+    if (!root) return;
+    clearSimulator(root);
+    var steps = Array.prototype.slice.call(root.querySelectorAll('.sim-step'));
+    var failAt = mode === 'good' ? -1 : (mode === 'bad-sec' ? 4 : 6);
+    var index = 0;
+
+    function runOne() {
+      if (index >= steps.length) {
+        steps.forEach(function (item) { item.removeAttribute('aria-current'); });
+        var finalMessage = root.querySelector('[data-sim-final]') || document.getElementById('simFinal');
+        var ok = mode === 'good';
+        if (finalMessage) finalMessage.textContent = ok ? '✓ 全绿，流程通过' : '✗ 拦截成功，流程中止';
+        if (window.talkSend) window.talkSend('sim-done', { mode: mode, ok: ok });
+        simulatorTimers.delete(root);
+        return;
+      }
+      var step = steps[index];
+      var glyph = step.querySelector('.glyph');
+      var failed = index === failAt;
+      steps.forEach(function (item) { item.removeAttribute('aria-current'); });
+      step.classList.add(failed ? 'fail' : 'run');
+      step.setAttribute('aria-current', 'step');
+      if (glyph) glyph.textContent = failed ? '✗' : '✓';
+      index = failed ? steps.length : index + 1;
+      simulatorTimers.set(root, setTimeout(runOne, reducedMotion ? 0 : 240));
+    }
+    runOne();
+  }
+
+  function simReset(rootId) {
+    var root = document.getElementById(rootId || 'simSteps');
+    if (root) clearSimulator(root);
+  }
+
+  function initSimulatorControls() {
+    document.addEventListener('click', function (event) {
+      var runButton = event.target && event.target.closest ? event.target.closest('[data-sim-mode]') : null;
+      if (runButton) {
+        simRun(runButton.getAttribute('data-sim-mode') || 'good', runButton.getAttribute('data-sim-root') || undefined);
+        return;
+      }
+      var resetButton = event.target && event.target.closest ? event.target.closest('[data-sim-reset]') : null;
+      if (resetButton) simReset(resetButton.getAttribute('data-sim-reset') || undefined);
+    });
+  }
+
+  function audit(root) {
+    root = root || document;
+    var errors = [];
+    var warnings = [];
+    var idCounts = {};
+    root.querySelectorAll('[id]').forEach(function (node) {
+      idCounts[node.id] = (idCounts[node.id] || 0) + 1;
+    });
+    Object.keys(idCounts).forEach(function (id) {
+      if (idCounts[id] > 1) errors.push('重复 id：' + id);
+    });
+
+    var h1Count = root.querySelectorAll('h1').length;
+    if (h1Count !== 1) errors.push('正式汇报必须恰好使用一个 h1；当前为 ' + h1Count + ' 个。');
+    if (!root.querySelector('.hero h1')) errors.push('hero 中缺少 h1。');
+    var headingLevels = Array.prototype.map.call(root.querySelectorAll('h1,h2,h3,h4,h5,h6'), function (heading) {
+      return Number(heading.tagName.slice(1));
+    });
+    for (var headingIndex = 1; headingIndex < headingLevels.length; headingIndex += 1) {
+      if (headingLevels[headingIndex] > headingLevels[headingIndex - 1] + 1) {
+        warnings.push('标题层级从 h' + headingLevels[headingIndex - 1] + ' 跳到 h' + headingLevels[headingIndex] + '。');
+        break;
+      }
+    }
+    root.querySelectorAll('.kpi').forEach(function (node, index) {
+      if (!node.querySelector('.num') || !node.querySelector('.lbl')) warnings.push('第 ' + (index + 1) + ' 个 KPI 缺少 .num 或 .lbl。');
+    });
+    root.querySelectorAll('img').forEach(function (node) {
+      if (!node.hasAttribute('alt')) warnings.push('图片缺少 alt：' + (node.getAttribute('src') || '(inline)'));
+    });
+    root.querySelectorAll('button').forEach(function (node) {
+      if (!node.textContent.trim() && !node.getAttribute('aria-label')) warnings.push('按钮缺少可访问名称。');
+    });
+    root.querySelectorAll('.tbl-wrap').forEach(function (node) {
+      if (!node.hasAttribute('tabindex') || !node.getAttribute('aria-label')) warnings.push('横向表格容器缺少键盘焦点或可访问名称。');
+    });
+    var inlineStyleNodes = Array.prototype.slice.call(root.querySelectorAll('[style]')).filter(function (node) {
+      return !node.closest('.mermaid svg') && !node.classList.contains('mermaidTooltip');
+    });
+    var nonTokenInlineStyles = inlineStyleNodes.filter(function (node) {
+      return node.getAttribute('style').split(';').map(function (part) { return part.trim(); }).filter(Boolean)
+        .some(function (part) { return !/^--[a-z0-9_-]+\s*:/i.test(part); });
+    }).length;
+    if (nonTokenInlineStyles > 0) warnings.push('正文含 ' + nonTokenInlineStyles + ' 个非令牌内联 style；优先使用设计系统 class。');
+
+    return {
+      version: VERSION,
+      errors: errors,
+      warnings: warnings,
+      stats: {
+        sections: root.querySelectorAll('section[id]').length,
+        cards: root.querySelectorAll('.card').length,
+        kpis: root.querySelectorAll('.kpi').length,
+        tables: root.querySelectorAll('table').length,
+        inlineStyles: inlineStyleNodes.length
+      }
+    };
+  }
+
+  window.simRun = simRun;
+  window.simReset = simReset;
+  window.ReportDesignSystem = Object.freeze({ version: VERSION, audit: audit, simRun: simRun, simReset: simReset });
+
+
+  function initTrace() {
+    var node = document.getElementById('report-trace-data');
+    var root = document.getElementById('report-trace-root');
+    if (!node || !root) return;
+    var raw = (node.textContent || '').trim();
+    if (!raw || raw === '{{' + 'trace}}') return;
+    var data;
+    try { data = JSON.parse(raw); } catch (e) { return; }
+    if (!data || !Array.isArray(data.steps) || !data.steps.length) return;
+    var T = { think: ['#2f5061', '思考'], tool: ['#3f6b3d', '工具'], wait: ['#7a5713', '等待'], fail: ['#9c3a2e', '失败'] };
+    var steps = data.steps.map(function (s, i) {
+      var t = T[s.t] ? s.t : 'tool';
+      return { t: t, label: String(s.label || ('步骤 ' + (i + 1))), ms: Number(s.ms) || 400, kind: s.kind || t, detail: s.detail || '', cmd: s.cmd, out: s.out, flagged: !!s.flagged };
+    });
+    var max = Math.max.apply(null, steps.map(function (s) { return s.ms; }));
+    var st = data.stats || {};
+    root.classList.add('trace-on');
+    root.innerHTML =
+      '<div class="trace-panel"><div class="trace-head">会话轨迹回放<span class="hint">talkSend · trace.*</span></div>' +
+      '<div class="trace-stats">' +
+      (st.tokens ? '<span>tokens <b>' + st.tokens + '</b></span>' : '') +
+      (st.time ? '<span>耗时 <b>' + st.time + '</b></span>' : '') +
+      (st.cost ? '<span>花费 <b>' + st.cost + '</b></span>' : '') +
+      '<span>步骤 <b>' + steps.length + '</b></span>' +
+      '<span>失败 <b>' + steps.filter(function (s) { return s.t === 'fail'; }).length + '</b></span>' +
+      '</div><div class="trace-water">' +
+      steps.map(function (s, i) {
+        var c = T[s.t][0];
+        return '<div class="trow" data-i="' + i + '" style="' + (s.flagged ? 'border-color:var(--bad)' : '') + '">' +
+          '<span class="no">' + String(i + 1).padStart(2, '0') + '</span>' +
+          '<span class="t" style="background:' + c + '">' + T[s.t][1] + '</span>' +
+          '<span class="lbl">' + s.label + '</span>' +
+          '<span class="track"><span class="bar" style="width:' + Math.round(s.ms / max * 100) + '%;background:' + c + '"></span></span>' +
+          '<span class="ms">' + (s.ms / 1000).toFixed(1) + 's</span>' +
+          '<button class="flag' + (s.flagged ? ' on' : '') + '" data-i="' + i + '" title="这步不该发生">⚑</button></div>';
+      }).join('') + '</div><div class="trace-review" id="trace-review"></div></div>';
+    var water = root.querySelector('.trace-water');
+    function review() {
+      var f = steps.filter(function (s) { return s.flagged; });
+      var box = root.querySelector('#trace-review');
+      box.innerHTML = f.length ? f.map(function (s, i) {
+        return '<div class="item"><span style="color:var(--bad)">⚑</span><b>' + s.label + '</b><span style="margin-left:auto;font-size:10.5px;color:var(--txt-faint)">' + T[s.t][1] + '</span></div>';
+      }).join('') : '<div class="trace-empty">暂无标记 · 问题步骤点行右侧 ⚑</div>';
+    }
+    water.addEventListener('click', function (e) {
+      var flag = e.target.closest('.flag');
+      if (flag) { var i = +flag.dataset.i; steps[i].flagged = !steps[i].flagged; flag.classList.toggle('on', steps[i].flagged);
+        flag.closest('.trow').style.borderColor = steps[i].flagged ? 'var(--bad)' : '';
+        if (window.talkSend) window.talkSend('trace.flag', { step: steps[i].label, flag: steps[i].flagged });
+        review(); return; }
+      var row = e.target.closest('.trow'); if (!row) return;
+      var s = steps[+row.dataset.i]; var c = T[s.t][0];
+      var m = document.createElement('div'); m.className = 'trace-modal';
+      m.innerHTML = '<div class="box"><button class="x">✕</button><h4><span style="color:' + c + '">' + T[s.t][1] + '</span> · ' + s.label + '</h4>' +
+        (s.kind === 'bash' && s.cmd ? '<div class="trace-detail">' + s.cmd + (s.out ? '\n' + s.out : '') + '</div>' : (s.detail ? '<div style="font-size:12.5px;color:var(--txt-dim)">' + s.detail + '</div>' : ''));
+      document.body.appendChild(m);
+      m.querySelector('.x').onclick = function () { m.remove(); };
+      m.addEventListener('mousedown', function (ev) { if (ev.target === m) m.remove(); });
+    });
+    review();
+  }
+
+  onReady(function () {
+    initTabs();
+    var countersReady = initCounters();
+    initProgress();
+    initNavigation();
+    initTableRegions();
+    initTooltips();
+    initTrace();
+    initPrintExpansion();
+    initSimulatorControls();
+    var mermaidReady = Promise.resolve(initMermaid());
+    // Core readiness is independent of the optional 3.5 MB chart engine. Mermaid
+    // keeps readable source visible while it loads and publishes its own state.
+    Promise.resolve(countersReady).finally(function () {
+      document.documentElement.setAttribute('data-report-ready', 'true');
+      document.dispatchEvent(new CustomEvent('report:ready', { detail: audit(document) }));
+    });
+    mermaidReady.finally(function () {
+      document.dispatchEvent(new CustomEvent('report:mermaidready', { detail: { state: document.documentElement.getAttribute('data-report-mermaid') } }));
+    });
+  });
+})();
+</script>
+<script id="talk-bridge" data-talk-bridge="v2">(() => {
+  const SOURCE = "talk-bridge";
+  const surfaceId = (() => {
+    try { return document.body && document.body.getAttribute("data-talk-surface") || null; } catch (_) { return null; }
+  })();
+  function talkSend(type, payload) {
+    const body = JSON.stringify({
+      type: typeof type === "string" ? type : "event",
+      payload: payload === undefined ? (typeof type === "object" ? type : null) : payload,
+      source: SOURCE,
+      surface: surfaceId,
+    });
+    return fetch("/api/event", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body,
+      keepalive: true,
+    }).catch(() => {});
+  }
+  window.talkSend = talkSend;
+  window.talkEmit = talkSend;
+  // Live reload + incremental DOM patches
+  try {
+    const es = new EventSource("/events/stream");
+    es.addEventListener("reload", (ev) => {
+      try {
+        const d = JSON.parse(ev.data || "{}");
+        if (d.surfaceId && d.surfaceId !== surfaceId) return; // other surface changed
+        location.reload();
+      } catch (_) { location.reload(); }
+    });
+    es.addEventListener("patch", (ev) => {
+      let d = {};
+      try { d = JSON.parse(ev.data || "{}"); } catch (_) {}
+      if (d.surfaceId && d.surfaceId !== surfaceId) return;
+      if (!d.selector) return;
+      const el = document.querySelector(d.selector);
+      if (!el) return;
+      const html = typeof d.html === "string" ? d.html : "";
+      switch (d.method || "inner") {
+        case "remove": el.remove(); break;
+        case "outer": el.outerHTML = html; break;
+        case "append": el.insertAdjacentHTML("beforeend", html); break;
+        case "prepend": el.insertAdjacentHTML("afterbegin", html); break;
+        default: el.innerHTML = html;
+      }
+      window.dispatchEvent(new CustomEvent("talk:patched", { detail: d }));
+    });
+    es.onerror = () => { /* browser retries */ };
+  } catch (_) {}
+  // Click delegation helper: elements with data-talk-event
+  document.addEventListener("click", (ev) => {
+    const el = ev.target && ev.target.closest ? ev.target.closest("[data-talk-event]") : null;
+    if (!el) return;
+    const type = el.getAttribute("data-talk-event") || "click";
+    const payload = {
+      id: el.id || null,
+      text: (el.innerText || "").trim().slice(0, 200),
+      value: el.getAttribute("data-talk-value"),
+      href: el.getAttribute("href"),
+    };
+    talkSend(type, payload);
+  }, true);
+  // Form submission: any form with [data-talk-form] serializes and sends
+  document.addEventListener("submit", (ev) => {
+    const form = ev.target && ev.target.closest ? ev.target.closest("[data-talk-form]") : null;
+    if (!form) return;
+    ev.preventDefault();
+    const type = form.getAttribute("data-talk-form") || "form";
+    const fd = new FormData(form);
+    const values = {};
+    for (const [k, v] of fd.entries()) {
+      if (k in values) {
+        if (!Array.isArray(values[k])) values[k] = [values[k]];
+        values[k].push(v);
+      } else values[k] = v;
+    }
+    talkSend(type, {
+      id: form.id || null,
+      name: form.getAttribute("name"),
+      values,
+      action: form.getAttribute("action"),
+    });
+  }, true);
+  // Debounced input events: elements with [data-talk-input]
+  const inputTimers = {};
+  document.addEventListener("input", (ev) => {
+    const el = ev.target && ev.target.closest ? ev.target.closest("[data-talk-input]") : null;
+    if (!el) return;
+    const type = el.getAttribute("data-talk-input") || "input";
+    clearTimeout(inputTimers[el]);
+    inputTimers[el] = setTimeout(() => {
+      const payload = {
+        id: el.id || null,
+        name: el.getAttribute("name") || el.getAttribute("data-name"),
+        value: el.value ?? null,
+        checked: el.checked ?? null,
+        tag: el.tagName,
+      };
+      const host = el.form && el.form.closest ? el.form.closest("[data-talk-form]") : null;
+      if (host) payload.form = host.getAttribute("data-talk-form") || "form";
+      talkSend(type, payload);
+    }, 350);
+  }, true);
+})();</script>
+</body>
+</html>
